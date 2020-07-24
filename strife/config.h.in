@@ -1,0 +1,2 @@
+#define Strife_VERSION_MAJOR @Strife_VERSION_MAJOR@
+#define Strife_VERSION_MINOR @Strife_VERSION_MINOR@
