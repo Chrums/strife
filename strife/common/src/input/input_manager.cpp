@@ -1,33 +1,6 @@
-#include "input_manager.h"
+#include "input/input_manager.h"
 
-#include <iostream>
-
-using namespace std;
-using namespace strife::main;
-
-const float InputManager::ButtonInput::value() const {
-    return value_;
-}
-
-const bool InputManager::ButtonInput::isDown() const {
-    return value_ != 0.0f;
-}
-
-void InputManager::KeyInput::process(const SDL_Event& event) {
-    switch (event.type) {
-
-        case SDL_KEYDOWN: {
-            value_ = 1.0f;
-            break;
-        }
-
-        case SDL_KEYUP: {
-            value_ = 0.0f;
-            break;
-        }
-
-    }
-}
+using namespace strife::common;
 
 void InputManager::process(const SDL_Event& event) {
     switch (event.type) {
@@ -65,20 +38,24 @@ void InputManager::process(const SDL_Event& event) {
     }
 }
 
-const InputManager::ButtonInput& InputManager::key(const SDL_Keycode keyCode) {
+const MouseInput& InputManager::mouse() {
+    return mouseProcessor_;
+}
+
+const ButtonInput& InputManager::key(const SDL_Keycode keyCode) {
     return findKey(keyCode);
 }
 
 void InputManager::processMouse(const SDL_Event& event) {
-    
+    mouseProcessor_.process(event);
 }
 
 void InputManager::processKey(const SDL_Event& event) {
     SDL_Keycode keyCode = event.key.keysym.sym;
-    InputManager::KeyInput& keyInput = findKey(keyCode);
-    keyInput.process(event);
+    KeyButtonProcessor& keyButtonProcessor = findKey(keyCode);
+    keyButtonProcessor.process(event);
 }
 
-InputManager::KeyInput& InputManager::findKey(const SDL_Keycode keyCode) {
-    return keyInputs_.emplace(keyCode, InputManager::KeyInput {}).first->second;
+KeyButtonProcessor& InputManager::findKey(const SDL_Keycode keyCode) {
+    return keyButtonProcessors_.emplace(keyCode, KeyButtonProcessor {}).first->second;
 }

@@ -69,7 +69,7 @@ private:
     InputSystem& inputSystem_;
 
     void onUpdate(TestComponent& testComponent) {
-        cout << inputSystem_.inputManager.key(SDLK_a).value() << endl;
+        cout << inputSystem_.inputManager.mouse().position().x << ", " << inputSystem_.inputManager.mouse().position().y << endl;
     }
     
 };

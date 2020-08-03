@@ -39,10 +39,12 @@ if(EMSCRIPTEN)
     target_link_libraries(${PROJECT_NAME}
         libboost_system.a
         libboost_filesystem.a
+        strife::math
     )
 else()
     target_link_libraries(${PROJECT_NAME}
         Boost::system
         Boost::filesystem
+        strife::math
     )
 endif()

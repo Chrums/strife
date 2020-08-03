@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include "system.h"
-#include "input_manager.h"
+#include "input/input_manager.h"
 
 namespace strife {
     namespace main {
@@ -11,7 +11,7 @@ namespace strife {
             
         public:
 
-            InputManager inputManager;
+            common::InputManager inputManager;
             
             InputSystem() = default;
             ~InputSystem() = default;

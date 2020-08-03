@@ -2,8 +2,6 @@
 
 #include "engine.h"
 
-#include <iostream>
-
 using namespace strife::main;
 using namespace strife::common;
 using namespace strife::core;

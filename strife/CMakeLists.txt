@@ -21,18 +21,17 @@ else()
     find_package(Boost 1.72.0 REQUIRED)
 endif()
 
-
+add_subdirectory(math)
 add_subdirectory(common)
 add_subdirectory(core)
-add_subdirectory(math)
 add_subdirectory(main)
 
 add_executable(index main.cpp)
 
 target_link_libraries(index
+    strife::math
     strife::common
     strife::core
-    strife::math
     strife::main
 )
 
