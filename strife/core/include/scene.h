@@ -34,6 +34,7 @@ namespace strife {
             class Components {
                 
                 friend class Entity;
+                friend class Entities;
                 
             public:
             
@@ -94,9 +95,11 @@ namespace strife {
                 std::map<const std::type_index, IStorage* const> components_;
                 
                 Component& add(const std::type_index type, const Entity entity);
+                void remove(const Entity entity);
                 void remove(const std::type_index type, const Entity entity);
                 Component& at(const std::type_index type, const Entity entity) const;
                 Component* const get(const std::type_index type, const Entity entity) const;
+            
             };
             
         public:

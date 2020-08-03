@@ -1,8 +1,7 @@
 #pragma once
 
-#include "message.h"
+#include "dispatch/message.h"
 #include "scene.h"
-#include "timer.h"
 
 namespace strife {
     namespace core {

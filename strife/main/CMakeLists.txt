@@ -22,10 +22,10 @@ else()
     )
 endif()
 
-file(GLOB main_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*)
-file(GLOB main_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*)
+file(GLOB_RECURSE MAIN_INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
+file(GLOB_RECURSE MAIN_SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
-add_library(${PROJECT_NAME} ${main_SOURCE_FILES})
+add_library(${PROJECT_NAME} ${MAIN_SOURCE_FILES})
 add_library(strife::main ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -45,6 +45,7 @@ if(EMSCRIPTEN)
         libboost_filesystem.a
         strife::common
         strife::core
+        strife::math
     )
 else()
     target_link_libraries(${PROJECT_NAME}
@@ -52,8 +53,9 @@ else()
         Boost::filesystem
         strife::common
         strife::core
+        strife::math
     )
 endif()
 
 install(TARGETS main DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(FILES ${main_INCLUDE_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/main)
+install(FILES ${MAIN_INCLUDE_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/main)

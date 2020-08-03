@@ -5,16 +5,18 @@
 #include <map>
 #include <string>
 #include <typeindex>
-#include "dispatcher.h"
+#include <SDL2/SDL.h>
+#include "action.h"
+#include "dispatch/dispatcher.h"
+#include "time/timer.h"
 #include "scene.h"
 #include "system.h"
-#include "timer.h"
 
 namespace strife {
     namespace core {
         
         class Engine {
-            
+        
         public:
             
             class Scenes {
@@ -43,10 +45,10 @@ namespace strife {
                 Systems(Engine& engine);
                 ~Systems();
                 
-                template <class S>
-                S& add() {
+                template <class S, class ...Args>
+                S& add(Args... args) {
                     std::type_index type(typeid(S));
-                    S* const system = new S();
+                    S* const system = new S(args...);
                     system->subscribe(engine_.dispatcher);
                     systems_.insert({type, system});
                     return *system;
@@ -63,7 +65,8 @@ namespace strife {
                 template <class S>
                 S& at() {
                     std::type_index type(typeid(S));
-                    return systems_.at(type);
+                    ISystem* const system = systems_.at(type);
+                    return static_cast<S&>(*system);
                 }
                 
                 template <class S>
@@ -89,6 +92,7 @@ namespace strife {
             
             common::Dispatcher dispatcher;
             common::Timer::Value time;
+            common::Action<const SDL_Event&> inputEvent;
             
             Scenes scenes;
             Systems systems;

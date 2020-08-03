@@ -1,6 +1,7 @@
 #pragma once
 
 #include "unique.h"
+#include "data.h"
 #include "entity.h"
 
 namespace strife {
@@ -15,6 +16,9 @@ namespace strife {
             Component(const Entity entity);
 			virtual ~Component() = default;
             
+            virtual common::Data serialize();
+            virtual void deserialize(common::Data data);
+
         };
         
     }

@@ -4,7 +4,7 @@
 #include <map>
 #include <typeindex>
 #include <vector>
-#include "message.h"
+#include "dispatch/message.h"
 
 namespace strife {
     namespace common {
@@ -28,12 +28,13 @@ namespace strife {
                 ~Binding() = default;
                     
                 void operator()(const Message& message) {
-                    callback_(static_cast<const M&>(message));
+                    const M& typedMessage = static_cast<const M&>(message);
+                    callback_(typedMessage);
                 }
                 
             private:
             
-                Callback<M> callback_;
+                const Callback<M> callback_;
             
             };
             
@@ -55,6 +56,7 @@ namespace strife {
             template <class M>
             void unsubscribe(Callback<M> callback) {
                 const std::type_index type(typeid(M));
+                std::vector<Callback<Message>>& callbacks = callbacks_[type];
                 // TODO: Implement this...
             }
             

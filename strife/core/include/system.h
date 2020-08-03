@@ -2,7 +2,7 @@
 
 #include <functional>
 #include <set>
-#include "dispatcher.h"
+#include "dispatch/dispatcher.h"
 #include "events.h"
 #include "scene.h"
 #include "storage.h"

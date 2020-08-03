@@ -12,6 +12,7 @@ const Entity Scene::Entities::add() {
 }
 
 void Scene::Entities::remove(const Entity entity) {
+    scene_.components.remove(entity);
     entities_.erase(entity);
 }
 
@@ -26,6 +27,10 @@ Scene::Components::~Components() {
 
 Component& Scene::Components::add(const type_index type, const Entity entity) {
     return components_.at(type)->add(entity);
+}
+
+void Scene::Components::remove(const Entity entity) {
+    // TODO: Implement this...
 }
 
 void Scene::Components::remove(const type_index type, const Entity entity) {

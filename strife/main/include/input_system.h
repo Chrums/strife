@@ -1,19 +1,24 @@
 #pragma once
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "system.h"
+#include "input_manager.h"
 
 namespace strife {
     namespace main {
         
-        class InputSystem : public core::System {
+        class InputSystem : public core::ISystem {
             
-        using core::System::System;
-        
         public:
+
+            InputManager inputManager;
             
-            virtual void onUpdate(const core::UpdateEvent& updateEvent);
-            
+            InputSystem() = default;
+            ~InputSystem() = default;
+
+            virtual void subscribe(common::Dispatcher& dispatcher);
+            virtual void unsubscribe(common::Dispatcher& dispatcher);
+
         private:
 
             void process(const SDL_Event& event);

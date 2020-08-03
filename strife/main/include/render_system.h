@@ -1,18 +1,25 @@
 #pragma once
 
+#include <SDL2/SDL.h>
 #include "system.h"
+#include "vector2.h"
 
 namespace strife {
     namespace main {
         
-        class RenderSystem : core::System {
+        class RenderSystem : public core::System {
             
-        using core::System::System;
-        
         public:
-            
+
+            RenderSystem(const math::Vector2& windowDimensions);
+            ~RenderSystem();
             virtual void onUpdate(const core::UpdateEvent& updateEvent);
             
+        private:
+
+            SDL_Window* window_;
+            SDL_Renderer* renderer_;
+
         };
         
     }

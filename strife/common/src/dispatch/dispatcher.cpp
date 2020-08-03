@@ -1,4 +1,4 @@
-#include "dispatcher.h"
+#include "dispatch/dispatcher.h"
 
 using namespace strife::common;
 using namespace std;

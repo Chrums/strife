@@ -2,8 +2,10 @@
 #include <emscripten.h>
 #include "engine.h"
 #include "input_system.h"
+#include "render_system.h"
+#include "action.h"
+#include "vector2.h"
 
-#include <SDL.h>
 #include <stdio.h>
 
 //Screen dimension constants
@@ -14,6 +16,7 @@ const int SCREEN_HEIGHT = 480;
 using namespace std;
 using namespace strife::common;
 using namespace strife::core;
+using namespace strife::math;
 using namespace strife::main;
 
 class TestComponent : public Component {
@@ -54,28 +57,29 @@ protected:
 
 class TestSystem : public ComponentSystem<TestComponent> {
 
-using ComponentSystem<TestComponent>::ComponentSystem;
-    
+public:
+
+    TestSystem() 
+        : inputSystem_(Engine::Instance().systems.at<InputSystem>()) {}
+
+    ~TestSystem() = default;
+
 private:
     
+    InputSystem& inputSystem_;
+
     void onUpdate(TestComponent& testComponent) {
-        cout << Engine::Instance().time.total << endl;
-        cout << testComponent.id << endl;
+        cout << inputSystem_.inputManager.key(SDLK_a).value() << endl;
     }
     
 };
 
 int main(int argc, char* argv[]) {
     
-    //The window we'll be rendering to
-    SDL_Window* window = NULL;
-    
-    //The surface contained by the window
-    SDL_Surface* surface = NULL;
-    
     Engine& engine = Engine::Instance();
-    engine.systems.add<TestSystem>();
     engine.systems.add<InputSystem>();
+    engine.systems.add<RenderSystem>(Vector2(640.0f, 480.0f));
+    engine.systems.add<TestSystem>();
     string path = "...";
     Scene& scene = engine.scenes.load(path);
     scene.components.add<TestComponent>();

@@ -22,10 +22,10 @@ else()
     )
 endif()
 
-file(GLOB core_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*)
-file(GLOB core_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*)
+file(GLOB_RECURSE CORE_INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
+file(GLOB_RECURSE CORE_SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
-add_library(${PROJECT_NAME} ${core_SOURCE_FILES})
+add_library(${PROJECT_NAME} ${CORE_SOURCE_FILES})
 add_library(strife::core ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -46,6 +46,3 @@ else()
         strife::common
     )
 endif()
-
-install(TARGETS core DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(FILES ${core_INCLUDE_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/core)

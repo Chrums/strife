@@ -66,11 +66,24 @@ void Engine::run() {
 
 void Engine::update() {
 	time = timer_.update();
-	dispatcher.emit(UpdateEvent());
+
+	SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+		if (event.type == SDL_QUIT) {
+			// TODO: Implement this...
+		}
+
+        inputEvent(event);
+    }
+	
+	UpdateEvent updatEvent;
+	dispatcher.emit(updatEvent);
 }
 
 Engine* Engine::instance_ = nullptr;
 
 Engine::Engine()
     : scenes(*this)
-    , systems(*this) {}
+    , systems(*this) {
+	SDL_Init(SDL_INIT_EVERYTHING);
+}
