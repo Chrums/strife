@@ -3,6 +3,7 @@
 #include <map>
 #include <set>
 #include <typeindex>
+#include "serialization/data.h"
 #include "storage.h"
 #include "unique.h"
 
@@ -32,9 +33,6 @@ namespace strife {
             };
             
             class Components {
-                
-                friend class Entity;
-                friend class Entities;
                 
             public:
             
@@ -89,16 +87,16 @@ namespace strife {
                     return static_cast<C* const>(component);
                 }
                 
-            private:
-            
-                Scene& scene_;
-                std::map<const std::type_index, IStorage* const> components_;
-                
                 Component& add(const std::type_index type, const Entity entity);
                 void remove(const Entity entity);
                 void remove(const std::type_index type, const Entity entity);
                 Component& at(const std::type_index type, const Entity entity) const;
                 Component* const get(const std::type_index type, const Entity entity) const;
+
+            private:
+
+                Scene& scene_;
+                std::map<const std::type_index, IStorage* const> components_;
             
             };
             
@@ -109,6 +107,9 @@ namespace strife {
             
             Scene();
             ~Scene() = default;
+
+            common::Data serialize();
+            void deserialize(common::Data data);
             
         };
         

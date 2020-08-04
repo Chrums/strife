@@ -16,7 +16,7 @@ Engine::Scenes::Scenes(Engine& engine)
 	, active_(nullptr) {}
 
 Scene& Engine::Scenes::load(const string path) {
-	Scene& scene = scenes_.try_emplace(path).first->second;
+	Scene& scene = scenes_.emplace(path, Scene {}).first->second;
 	
 	SceneLoadEvent sceneLoadEvent(scene);
 	engine_.dispatcher.emit(sceneLoadEvent);

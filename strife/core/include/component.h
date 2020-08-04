@@ -1,7 +1,7 @@
 #pragma once
 
 #include "unique.h"
-#include "data.h"
+#include "serialization/data.h"
 #include "entity.h"
 
 namespace strife {

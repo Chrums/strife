@@ -45,10 +45,10 @@ public:
 protected:
 
     void onUpdate(const UpdateEvent& updateEvent) {
-        Storage<C>& storage = scene_->components.at<C>();
-        for (auto [entity, component] : storage) {
-            onUpdate(component);
-        }
+        // Storage<C>& storage = scene_->components.at<C>();
+        // for (auto [entity, component] : storage) {
+        //     onUpdate(component);
+        // }
     }
 
     virtual void onUpdate(C& component) = 0;
@@ -60,7 +60,8 @@ class TestSystem : public ComponentSystem<TestComponent> {
 public:
 
     TestSystem() 
-        : inputSystem_(Engine::Instance().systems.at<InputSystem>()) {}
+        : ComponentSystem()
+        , inputSystem_(Engine::Instance().systems.at<InputSystem>()) {}
 
     ~TestSystem() = default;
 
@@ -77,9 +78,11 @@ private:
 int main(int argc, char* argv[]) {
     
     Engine& engine = Engine::Instance();
+
+    engine.systems.add<TestSystem>();
     engine.systems.add<InputSystem>();
     engine.systems.add<RenderSystem>(Vector2(640.0f, 480.0f));
-    engine.systems.add<TestSystem>();
+
     string path = "...";
     Scene& scene = engine.scenes.load(path);
     scene.components.add<TestComponent>();
@@ -89,6 +92,7 @@ int main(int argc, char* argv[]) {
     entity1.components.add<TestComponent>();
     Entity entity2 = scene.entities.add();
     entity2.components.add<TestComponent>();
+
     engine.scenes.swap(path);
     
     engine.run();

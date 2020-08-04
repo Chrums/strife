@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.11.0)
 project(math)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
 
 if(EMSCRIPTEN)
   set(CMAKE_TOOLCHAIN_FILE "${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake")

@@ -1,7 +1,8 @@
 #include "scene.h"
 
-using namespace strife::core;
 using namespace std;
+using namespace strife::common;
+using namespace strife::core;
 
 Scene::Entities::Entities(Scene& scene)
     : scene_(scene) {}
@@ -30,7 +31,9 @@ Component& Scene::Components::add(const type_index type, const Entity entity) {
 }
 
 void Scene::Components::remove(const Entity entity) {
-    // TODO: Implement this...
+    for (auto [type, storage] : components_) {
+        storage->remove(entity);
+    }
 }
 
 void Scene::Components::remove(const type_index type, const Entity entity) {
@@ -48,3 +51,11 @@ Component* const Scene::Components::get(const type_index type, const Entity enti
 Scene::Scene()
     : entities(*this)
     , components(*this) {}
+
+Data Scene::serialize() {
+    return Data();
+}
+
+void Scene::deserialize(Data data) {
+
+}
