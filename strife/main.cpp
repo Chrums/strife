@@ -5,13 +5,13 @@
 #include "render_system.h"
 #include "action.h"
 #include "vector2.h"
+#include "input/mouse_input.h"
 
 #include <stdio.h>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-
 
 using namespace std;
 using namespace strife::common;

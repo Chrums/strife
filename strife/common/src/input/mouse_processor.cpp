@@ -22,7 +22,7 @@ void MouseProcessor::process(const SDL_Event& event) {
         }
 
         case SDL_MOUSEWHEEL: {
-            
+            processWheel(event);
             break;
         }
 
@@ -30,15 +30,14 @@ void MouseProcessor::process(const SDL_Event& event) {
 }
 
 void MouseProcessor::processMotion(const SDL_Event& event) {
-    int x;
-    int y;
-    SDL_GetMouseState(&x, &y);
-    position_.x = x;
-    position_.y = y;
+    position_.x = event.motion.x;
+    position_.y = event.motion.y;
 }
 
 void MouseProcessor::processButton(const SDL_Event& event) {
-    
+    int index = event.button.button;
+    MouseButtonProcessor& mouseButtonProcessor = findMouseButtonProcessor(index);
+    mouseButtonProcessor.process(event);
 }
 
 void MouseProcessor::processWheel(const SDL_Event& event) {

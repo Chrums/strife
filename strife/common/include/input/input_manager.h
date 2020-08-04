@@ -19,7 +19,7 @@ namespace strife {
 
             void process(const SDL_Event& event);
 
-            const MouseInput& mouse();
+            MouseInput& mouse();
             const ButtonInput& key(const SDL_Keycode keyCode);
 
         private:
@@ -30,7 +30,7 @@ namespace strife {
             void processMouse(const SDL_Event& event);
             void processKey(const SDL_Event& event);
 
-            KeyButtonProcessor& findKey(const SDL_Keycode keyCode);
+            KeyButtonProcessor& findKeyButtonProcessor(const SDL_Keycode keyCode);
 
         };
 

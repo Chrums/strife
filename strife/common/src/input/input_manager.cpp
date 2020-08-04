@@ -38,12 +38,12 @@ void InputManager::process(const SDL_Event& event) {
     }
 }
 
-const MouseInput& InputManager::mouse() {
+MouseInput& InputManager::mouse() {
     return mouseProcessor_;
 }
 
 const ButtonInput& InputManager::key(const SDL_Keycode keyCode) {
-    return findKey(keyCode);
+    return findKeyButtonProcessor(keyCode);
 }
 
 void InputManager::processMouse(const SDL_Event& event) {
@@ -52,10 +52,10 @@ void InputManager::processMouse(const SDL_Event& event) {
 
 void InputManager::processKey(const SDL_Event& event) {
     SDL_Keycode keyCode = event.key.keysym.sym;
-    KeyButtonProcessor& keyButtonProcessor = findKey(keyCode);
+    KeyButtonProcessor& keyButtonProcessor = findKeyButtonProcessor(keyCode);
     keyButtonProcessor.process(event);
 }
 
-KeyButtonProcessor& InputManager::findKey(const SDL_Keycode keyCode) {
+KeyButtonProcessor& InputManager::findKeyButtonProcessor(const SDL_Keycode keyCode) {
     return keyButtonProcessors_.emplace(keyCode, KeyButtonProcessor {}).first->second;
 }
