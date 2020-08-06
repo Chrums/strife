@@ -1,16 +1,19 @@
 #pragma once
 
 #include <map>
+#include "serialization/data.h"
 #include "identifier.h"
 #include "iterator.h"
 #include "component.h"
 #include "entity.h"
 
+#include <iostream>
+
 namespace strife {
     namespace core {
         
         class IStorage {
-        
+
         public:
             
             IStorage() = default;
@@ -34,6 +37,7 @@ namespace strife {
             
                 Iterator(typename std::map<Entity, C>::iterator iterator)
                     : iterator_(iterator) {}
+
                 ~Iterator() = default;
                 
                 Iterator& operator++() {

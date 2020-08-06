@@ -1,16 +1,20 @@
 #include "unique.h"
 
+using namespace std;
+using namespace boost::uuids;
 using namespace strife::common;
 
-boost::uuids::nil_generator Unique::NilGenerator;
-boost::uuids::random_generator Unique::RandomGenerator;
+nil_generator Unique::NilGenerator;
+random_generator Unique::RandomGenerator;
 
 Unique Unique::Nil() {
-	return Unique(NilGenerator());
+	uuid id = Unique::NilGenerator();
+	return Unique(id);
 }
 
 Unique Unique::Random() {
-	return Unique(RandomGenerator());
+	uuid id = Unique::RandomGenerator();
+	return Unique(id);
 }
 
 Unique::Unique()

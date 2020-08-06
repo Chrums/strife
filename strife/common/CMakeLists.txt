@@ -1,7 +1,19 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.11.0)
 project(common)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
+include(FetchContent)
+
+FetchContent_Declare(json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.9.0
+)
+
+FetchContent_GetProperties(json)
+
+if(NOT json_POPULATED)
+    FetchContent_Populate(json)
+    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 if(EMSCRIPTEN)
   set(CMAKE_TOOLCHAIN_FILE "${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake")
@@ -25,10 +37,10 @@ endif()
 file(GLOB_RECURSE COMMON_INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
 file(GLOB_RECURSE COMMON_SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
-message(WARNING ${COMMON_SOURCE_FILES})
-
 add_library(${PROJECT_NAME} ${COMMON_SOURCE_FILES})
 add_library(strife::common ALIAS ${PROJECT_NAME})
+
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${Boost_INCLUDE_DIRS}
@@ -39,12 +51,14 @@ if(EMSCRIPTEN)
     target_link_libraries(${PROJECT_NAME}
         libboost_system.a
         libboost_filesystem.a
+        nlohmann_json::nlohmann_json
         strife::math
     )
 else()
     target_link_libraries(${PROJECT_NAME}
         Boost::system
         Boost::filesystem
+        nlohmann_json::nlohmann_json
         strife::math
     )
 endif()

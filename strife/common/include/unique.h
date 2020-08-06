@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/nil_generator.hpp>
@@ -20,7 +21,7 @@ namespace strife {
             static Unique Nil();
             static Unique Random();
             
-            Identifier id;
+            const Identifier id;
             
             Unique();
             Unique(const Unique& unique);

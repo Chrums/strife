@@ -57,5 +57,5 @@ void InputManager::processKey(const SDL_Event& event) {
 }
 
 KeyButtonProcessor& InputManager::findKeyButtonProcessor(const SDL_Keycode keyCode) {
-    return keyButtonProcessors_.emplace(keyCode, KeyButtonProcessor {}).first->second;
+    return keyButtonProcessors_.try_emplace(keyCode).first->second;
 }

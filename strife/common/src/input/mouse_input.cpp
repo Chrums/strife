@@ -12,5 +12,5 @@ const ButtonInput& MouseInput::button(const int index) {
 }
 
 MouseButtonProcessor& MouseInput::findMouseButtonProcessor(const int index) {
-    return mouseButtonProcessors_.emplace(index, MouseButtonProcessor {}).first->second;
+    return mouseButtonProcessors_.try_emplace(index).first->second;
 }

@@ -6,8 +6,8 @@ using namespace strife::core;
 Component::Component(const Entity entity)
     : entity(entity) {}
 
-Data Component::serialize() {
+const Data Component::serialize() const {
     return Data();
 }
 
-void Component::deserialize(Data data) {}
+void Component::deserialize(const Data data) {}

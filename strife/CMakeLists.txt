@@ -1,7 +1,5 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.11.0)
 project(strife)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 if(EMSCRIPTEN)
     set(CMAKE_TOOLCHAIN_FILE "${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake")
@@ -27,6 +25,8 @@ add_subdirectory(core)
 add_subdirectory(main)
 
 add_executable(index main.cpp)
+
+target_compile_features(index INTERFACE cxx_std_17)
 
 target_link_libraries(index
     strife::math
