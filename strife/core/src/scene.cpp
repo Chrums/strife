@@ -53,58 +53,67 @@ Scene::Components::Components(Scene& scene)
     : scene_(scene) {}
     
 Scene::Components::~Components() {
-    for (auto& [type, storage] : components_) {
-        delete storage;
+    for (auto& [type, components] : components_) {
+        delete components;
     }
 }
 
 Component& Scene::Components::add(const type_index type, const Entity entity) {
-    return components_.at(type)->add(entity);
+    map<Entity, Component>& components = *components_.at(type);
+    return components.emplace(entity, entity).first->second;
 }
 
 void Scene::Components::remove(const Entity entity) {
-    for (auto& [type, storage] : components_) {
-        storage->remove(entity);
+    for (auto& [type, components] : components_) {
+        components->erase(entity);
     }
 }
 
 void Scene::Components::remove(const type_index type, const Entity entity) {
-    return components_.at(type)->remove(entity);
+    map<Entity, Component>& components = *components_.at(type);
+    components.erase(entity);
 }
 
 Component& Scene::Components::at(const type_index type, const Entity entity) const {
-    return components_.at(type)->at(entity);
+    map<Entity, Component>& components = *components_.at(type);
+    return components.at(entity);
 }
 
-Component* const Scene::Components::get(const type_index type, const Entity entity) const {
-    return components_.at(type)->get(entity);
+Component* const Scene::Components::find(const type_index type, const Entity entity) const {
+    map<Entity, Component>& components = *components_.at(type);
+    map<Entity, Component>::iterator iterator = components.find(entity);
+    return iterator != components.end()
+        ? &iterator->second
+        : nullptr;
 }
 
-map<const type_index, IStorage* const>::const_iterator Scene::Components::begin() const {
+map<const type_index, std::map<Entity, Component>* const>::const_iterator Scene::Components::begin() const {
     return components_.begin();
 }
 
-map<const type_index, IStorage* const>::const_iterator Scene::Components::end() const {
+map<const type_index, std::map<Entity, Component>* const>::const_iterator Scene::Components::end() const {
     return components_.end();
 }
 
 const Data Scene::Components::serialize() const {
     Data data;
 
-    for (auto& [type, storage] : components_) {
-        int status;
-        char* typeName = abi::__cxa_demangle(type.name(), 0, 0, &status);
+    // for (auto& [type, components] : components_) {
+        
+    //     // TODO: Extract this to a reflection library?
+    //     int status;
+    //     char* typeName = abi::__cxa_demangle(type.name(), 0, 0, &status);
 
-        Data storageData;
-        Storage<Component>& componentStorage = *static_cast<Storage<Component>*>(storage);
-        for (auto [entity, component] : componentStorage) {
-            string entityId = boost::uuids::to_string(entity.id);
-            Data componentData = component.serialize();
-            storageData[entityId] = componentData;
-        }
+    //     Data componentsData;
+    //     map<Entity, Component>& components = *components;
+    //     for (auto [entity, component] : components) {
+    //         string entityId = boost::uuids::to_string(entity.id);
+    //         Data componentData = component.serialize();
+    //         componentsData[entityId] = componentData;
+    //     }
 
-        data[typeName] = storageData;
-    }
+    //     data[typeName] = componentsData;
+    // }
 
     return data;
 }
@@ -115,13 +124,13 @@ const Data Scene::Components::serialize() const {
             //     }
             // }
 
-void Scene::Components::deserialize(const Data data) {
-    for (auto& [typeName, type] : types_) {
-        IStorage* storage = components_.at(type);
-        Data storageData = data[typeName];
-        // storage->deserialize(storageData);
-    }
-}
+// void Scene::Components::deserialize(const Data data) {
+//     for (auto& [typeName, type] : types_) {
+//         IStorage* storage = components_.at(type);
+//         Data storageData = data[typeName];
+//         // storage->deserialize(storageData);
+//     }
+// }
 
 Scene::Scene()
     : entities(*this)

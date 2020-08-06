@@ -23,7 +23,7 @@ namespace strife {
                 Component& add(const std::type_index type);
 				void remove(const std::type_index type);
 				Component& at(const std::type_index type) const;
-				Component* const get(const std::type_index type) const;
+				Component* const find(const std::type_index type) const;
 				
 				template <class C>
 				C& add() {
@@ -46,9 +46,9 @@ namespace strife {
 				};
 				
 				template <class C>
-				C* const get() const {
+				C* const find() const {
 					const std::type_index type(typeid(C));
-					Component* const component = get(type);
+					Component* const component = find(type);
 					return static_cast<C* const>(component);
 				};
                 

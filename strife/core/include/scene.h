@@ -5,8 +5,9 @@
 #include <string>
 #include <typeindex>
 #include <cxxabi.h>
-#include "storage.h"
 #include "unique.h"
+#include "entity.h"
+#include "component.h"
 
 namespace strife {
     namespace core {
@@ -46,18 +47,30 @@ namespace strife {
                 Components(Scene& scene);
                 ~Components();
                 
+                Component& add(const std::type_index type, const Entity entity);
+                void remove(const Entity entity);
+                void remove(const std::type_index type, const Entity entity);
+                Component& at(const std::type_index type, const Entity entity) const;
+                Component* const find(const std::type_index type, const Entity entity) const;
+
+                std::map<const std::type_index, std::map<Entity, Component>* const>::const_iterator begin() const;
+                std::map<const std::type_index, std::map<Entity, Component>* const>::const_iterator end() const;
+
+                const common::Data serialize() const;
+                void deserialize(const common::Data data);
+                
                 template <class C>
-                Storage<C>& add() {
+                std::map<Entity, C>& add() {
                     std::type_index type(typeid(C));
-                    Storage<C>* const storage = new Storage<C>();
+                    std::map<Entity, C>* const components = new std::map<Entity, C>();
                     
                     // TODO: Extract this to a reflection library?
                     int status;
                     std::string typeName = std::string(abi::__cxa_demangle(type.name(), 0, 0, &status));
                     types_.insert({typeName, type});
 
-                    components_.insert({type, storage});
-                    return *storage;
+                    components_.insert({type, components});
+                    return *components;
                 }
                 
                 template <class C>
@@ -73,10 +86,10 @@ namespace strife {
                 }
                 
                 template <class C>
-                Storage<C>& at() const {
+                std::map<Entity, C>& at() const {
                     std::type_index type(typeid(C));
-                    IStorage& storage = *components_.at(type);
-                    return static_cast<Storage<C>&>(storage);
+                    std::map<Entity, Component>* components = components_.at(type);
+                    return dynamic_cast<std::map<Entity, C>&>(components);
                 }
                 
                 template <class C>
@@ -100,29 +113,17 @@ namespace strife {
                 }
                 
                 template <class C>
-                C* const get(const Entity entity) const {
+                C* const find(const Entity entity) const {
                     std::type_index type(typeid(C));
-                    Component* const component = get(type, entity);
+                    Component* const component = find(type, entity);
                     return static_cast<C* const>(component);
                 }
-                
-                Component& add(const std::type_index type, const Entity entity);
-                void remove(const Entity entity);
-                void remove(const std::type_index type, const Entity entity);
-                Component& at(const std::type_index type, const Entity entity) const;
-                Component* const get(const std::type_index type, const Entity entity) const;
-
-                std::map<const std::type_index, IStorage* const>::const_iterator begin() const;
-                std::map<const std::type_index, IStorage* const>::const_iterator end() const;
-
-                const common::Data serialize() const;
-                void deserialize(const common::Data data);
                 
             private:
             
                 Scene& scene_;
                 std::map<const std::string, std::type_index> types_;
-                std::map<const std::type_index, IStorage* const> components_;
+                std::map<const std::type_index, std::map<Entity, Component>* const> components_;
             
             };
             

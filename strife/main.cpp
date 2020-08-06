@@ -63,8 +63,8 @@ public:
 protected:
 
     void onUpdate(const UpdateEvent& updateEvent) {
-        Storage<C>& storage = scene_->components.at<C>();
-        for (auto [entity, component] : storage) {
+        map<Entity, C>& components = scene_->components.at<C>();
+        for (auto [entity, component] : components) {
             onUpdate(component);
         }
     }

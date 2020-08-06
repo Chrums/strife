@@ -22,8 +22,8 @@ Component& Entity::Components::at(const type_index type) const {
 	return entity_.scene.components.at(type, entity_);
 }
 
-Component* const Entity::Components::get(const type_index type) const {
-	return entity_.scene.components.get(type, entity_);
+Component* const Entity::Components::find(const type_index type) const {
+	return entity_.scene.components.find(type, entity_);
 }
 
 Entity::Entity(const Entity& entity)
