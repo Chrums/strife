@@ -21,15 +21,20 @@ namespace strife {
             static Unique Nil();
             static Unique Random();
             
-            const Identifier id;
+            const Identifier id() const;
             
             Unique();
             Unique(const Unique& unique);
-            Unique(const Identifier id);
+            Unique(const Identifier& id);
             ~Unique() = default;
             
+            Unique& operator=(const Unique& unique);
             bool operator==(const Unique& unique) const;
             bool operator<(const Unique& unique) const;
+
+        protected:
+
+            Identifier id_;
             
         };
         

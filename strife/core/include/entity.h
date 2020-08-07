@@ -2,6 +2,7 @@
 
 #include <typeindex>
 #include "unique.h"
+#include "serialization/data.h"
 
 namespace strife {
     namespace core {
@@ -18,12 +19,13 @@ namespace strife {
             public:
             
                 Components(Entity& entity);
+				Components(const Components& components);
                 ~Components() = default;
                 
                 Component& add(const std::type_index type);
 				void remove(const std::type_index type);
 				Component& at(const std::type_index type) const;
-				Component* const get(const std::type_index type) const;
+				Component* const find(const std::type_index type) const;
 				
 				template <class C>
 				C& add() {
@@ -46,9 +48,9 @@ namespace strife {
 				};
 				
 				template <class C>
-				C* const get() const {
+				C* const find() const {
 					const std::type_index type(typeid(C));
-					Component* const component = get(type);
+					Component* const component = find(type);
 					return static_cast<C* const>(component);
 				};
                 
@@ -60,19 +62,29 @@ namespace strife {
             
         public:
         
-            Scene& scene;
-            Components components;
+            Scene& scene() const;
+            Components& components();
         
+			Entity();
             Entity(const Entity& entity);
 			Entity(Scene& scene);
 			~Entity() = default;
 			
+			Entity& operator=(const Entity& entity);
 			bool operator==(const Entity& entity) const;
 			bool operator!=(const Entity& entity) const;
             
             void destroy();
+
+		private:
+
+			Scene* scene_;
+			Components components_;
             
         };
+
+		void to_json(common::Data& data, const Entity& entity);
+		void from_json(const common::Data& data, Entity& entity);
         
     }
 }

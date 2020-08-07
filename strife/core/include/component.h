@@ -17,7 +17,7 @@ namespace strife {
 			virtual ~Component() = default;
             
             virtual const common::Data serialize() const;
-            virtual void deserialize(const common::Data data);
+            virtual void deserialize(const common::Data& data);
 
         };
         

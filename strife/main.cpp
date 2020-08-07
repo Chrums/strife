@@ -31,6 +31,8 @@ public:
     int b;
     int c;
 
+    Entity e;
+
     const Data serialize() const {
         Data data;
 
@@ -38,13 +40,17 @@ public:
         data["b"] = b;
         data["c"] = c;
 
+        data["e"] = e;
+
         return data;
     }
 
-    void deserialize(const Data data) {
+    void deserialize(const Data& data) {
         a = data["a"].get<int>();
         b = data["b"].get<int>();
         c = data["c"].get<int>();
+
+        e = data["e"].get<Entity>();
     }
 
 };
@@ -95,36 +101,43 @@ private:
 
 int main(int argc, char* argv[]) {
 
-    Vector<int> v0(2);
-    v0.values[0] = 1;
-    v0.values[1] = 1;
+    // Vector<int> v0(2);
+    // v0.values[0] = 1;
+    // v0.values[1] = 1;
     
-    Vector<int> v1(2);
-    v1.values[0] = 3;
-    v1.values[1] = 3;
+    // Vector<int> v1(2);
+    // v1.values[0] = 3;
+    // v1.values[1] = 3;
 
-    cout << v0.distanceSquared(v1) << endl;
+    // cout << v0.distanceSquared(v1) << endl;
     
-    // Engine& engine = Engine::Instance();
+    Engine& engine = Engine::Instance();
 
-    // engine.systems.add<InputSystem>();
-    // engine.systems.add<RenderSystem>(Vector2(640.0f, 480.0f));
-    // engine.systems.add<TestSystem>();
+    engine.systems.add<InputSystem>();
+    engine.systems.add<RenderSystem>(Vector2(640.0f, 480.0f));
+    engine.systems.add<TestSystem>();
     
-    // string path = "...";
-    // Scene& scene = engine.scenes.load(path);
-    // scene.components.add<TestComponent>();
-    // Entity entity0 = scene.entities.add();
-    // entity0.components.add<TestComponent>();
-    // Entity entity1 = scene.entities.add();
-    // entity1.components.add<TestComponent>();
-    // Entity entity2 = scene.entities.add();
-    // entity2.components.add<TestComponent>();
-    // engine.scenes.swap(path);
+    string path = "...";
+    Scene& scene = engine.scenes.load(path);
+    scene.components.add<TestComponent>();
+    Entity e0 = scene.entities.add();
+    auto& tc0 = e0.components().add<TestComponent>();
+    Entity e1 = scene.entities.add();
+    auto& tc1 = e1.components().add<TestComponent>();
+    Entity e2 = scene.entities.add();
+    auto& tc2 = e2.components().add<TestComponent>();
+    engine.scenes.swap(path);
 
-    // Data data = scene.serialize();
-    // cout << data << endl;
-    // scene.deserialize(data);
+    tc0.a = 1;
+
+    tc0.e = e0;
+    tc1.e = e0;
+    tc2.e = e0;
+
+    Data data = scene.serialize();
+    cout << data << endl << endl;
+    scene.deserialize(data);
+    cout << scene.serialize() << endl;
 
     // engine.run();
     

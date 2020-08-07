@@ -10,4 +10,4 @@ const Data Component::serialize() const {
     return Data();
 }
 
-void Component::deserialize(const Data data) {}
+void Component::deserialize(const Data& data) {}
