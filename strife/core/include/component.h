@@ -1,7 +1,7 @@
 #pragma once
 
 #include "unique.h"
-#include "serialization/data.h"
+#include "strife/serialization/data.h"
 #include "entity.h"
 
 namespace strife {
@@ -11,13 +11,17 @@ namespace strife {
             
         public:
         
-            const Entity entity;
+            const Entity& entity();
             
-            Component(const Entity entity);
+            Component(const Entity& entity);
 			virtual ~Component() = default;
             
-            virtual const common::Data serialize() const;
-            virtual void deserialize(const common::Data& data);
+            virtual const serialization::Data serialize() const;
+            virtual void deserialize(const serialization::Data& data);
+
+        private:
+
+            const Entity entity_;
 
         };
         

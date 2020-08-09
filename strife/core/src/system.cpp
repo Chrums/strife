@@ -18,5 +18,5 @@ void System::unsubscribe(Dispatcher& dispatcher) {
 }
             
 void System::onSceneSwap(const SceneSwapEvent& sceneSwapEvent) {
-    scene_ = sceneSwapEvent.to;
+    scene_ = sceneSwapEvent.to();
 }

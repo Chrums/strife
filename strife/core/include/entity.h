@@ -2,7 +2,8 @@
 
 #include <typeindex>
 #include "unique.h"
-#include "serialization/data.h"
+#include "strife/reflection/type.h"
+#include "strife/serialization/data.h"
 
 namespace strife {
     namespace core {
@@ -22,34 +23,34 @@ namespace strife {
 				Components(const Components& components);
                 ~Components() = default;
                 
-                Component& add(const std::type_index type);
-				void remove(const std::type_index type);
-				Component& at(const std::type_index type) const;
-				Component* const find(const std::type_index type) const;
+                Component& add(const reflection::Type& type);
+				void remove(const reflection::Type& type);
+				Component& at(const reflection::Type& type) const;
+				Component* const find(const reflection::Type& type) const;
 				
 				template <class C>
 				C& add() {
-					const std::type_index type(typeid(C));
+					const reflection::Type& type = reflection::Type::Of<C>();
 					Component& component = add(type);
 					return static_cast<C&>(component);
 				};
 				
 				template <class C>
 				void remove() {
-					const std::type_index type(typeid(C));
+					const reflection::Type& type = reflection::Type::Of<C>();
 					remove(type);
 				};
 				
 				template <class C>
 				C& at() const {
-					const std::type_index type(typeid(C));
+					const reflection::Type& type = reflection::Type::Of<C>();
 					Component& component = at(type);
 					return static_cast<C&>(component);
 				};
 				
 				template <class C>
 				C* const find() const {
-					const std::type_index type(typeid(C));
+					const reflection::Type& type = reflection::Type::Of<C>();
 					Component* const component = find(type);
 					return static_cast<C* const>(component);
 				};
@@ -61,6 +62,9 @@ namespace strife {
             };
             
         public:
+
+			static bool Is(const serialization::Data& data);
+			static const common::Identifier Resolve(const serialization::Data& data);
         
             Scene& scene() const;
             Components& components();
@@ -74,7 +78,8 @@ namespace strife {
 			bool operator==(const Entity& entity) const;
 			bool operator!=(const Entity& entity) const;
             
-            void destroy();
+			void apply(serialization::Data& data) const;
+            void dispose();
 
 		private:
 
@@ -83,8 +88,8 @@ namespace strife {
             
         };
 
-		void to_json(common::Data& data, const Entity& entity);
-		void from_json(const common::Data& data, Entity& entity);
+		void to_json(serialization::Data& data, const Entity& entity);
+		void from_json(const serialization::Data& data, Entity& entity);
         
     }
 }

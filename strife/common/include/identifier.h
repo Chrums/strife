@@ -2,7 +2,6 @@
 
 #include <string>
 #include <boost/uuid/uuid.hpp>
-#include "serialization/data.h"
 
 namespace strife {
     namespace common {

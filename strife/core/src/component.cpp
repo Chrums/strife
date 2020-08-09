@@ -1,10 +1,15 @@
 #include "component.h"
 
 using namespace strife::common;
+using namespace strife::serialization;
 using namespace strife::core;
 
-Component::Component(const Entity entity)
-    : entity(entity) {}
+const Entity& Component::entity() {
+    return entity_;
+}
+
+Component::Component(const Entity& entity)
+    : entity_(entity) {}
 
 const Data Component::serialize() const {
     return Data();

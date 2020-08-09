@@ -10,11 +10,17 @@ namespace strife {
             
         public:
         
-            Scene& scene;
+            Scene& scene() const {
+                return scene_;
+            }
             
             SceneLoadEvent(Scene& scene)
                 : common::Message()
-                , scene(scene) {}
+                , scene_(scene) {}
+
+        private:
+
+            Scene& scene_;
             
         };
         
@@ -22,25 +28,41 @@ namespace strife {
             
         public:
         
-            Scene& scene;
+            Scene& scene() const {
+                return scene_;
+            }
             
             SceneUnloadEvent(Scene& scene)
                 : common::Message()
-                , scene(scene) {}
+                , scene_(scene) {}
+
+        private:
+
+            Scene& scene_;
             
         };
         
         class SceneSwapEvent : public common::Message {
             
         public:
-        
-            Scene* const from;
-            Scene* const to;
+
+            Scene* const from() const {
+                return from_;
+            }
+
+            Scene* const to() const {
+                return to_;
+            }
             
             SceneSwapEvent(Scene* const from, Scene* const to)
                 : common::Message()
-                , from(from)
-                , to(to) {}
+                , from_(from)
+                , to_(to) {}
+
+        private:
+        
+            Scene* const from_;
+            Scene* const to_;
             
         };
         

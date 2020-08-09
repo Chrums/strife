@@ -1,9 +1,11 @@
 #include "scene.h"
 
-#include <iostream>
-#include "serialization/serialization.h"
+#include "strife/serialization/context.h"
+#include "strife/serialization/contexts.h"
 
 using namespace std;
+using namespace strife::reflection;
+using namespace strife::serialization;
 using namespace strife::common;
 using namespace strife::core;
 
@@ -16,7 +18,7 @@ const Entity Scene::Entities::add() {
 }
 
 void Scene::Entities::remove(const Entity entity) {
-    scene_.components.remove(entity);
+    scene_.components().remove(entity);
     entities_.erase(entity);
 }
 
@@ -37,70 +39,71 @@ Scene::Components::~Components() {
     }
 }
 
-const type_index Scene::Components::type(string typeName) const {
-    return types_.at(typeName);
-}
-
-IStorage& Scene::Components::at(const type_index type) const {
+IStorage& Scene::Components::at(const Type& type) const {
     return *storages_.at(type);
 }
 
-IStorage* const Scene::Components::find(const type_index type) const {
-    auto iterator = storages_.find(type);
+IStorage* const Scene::Components::find(const Type& type) const {
+    map<const Type, IStorage* const>::const_iterator iterator = storages_.find(type);
     return iterator != storages_.end()
         ? iterator->second
         : nullptr;
 }
 
-Component& Scene::Components::add(const type_index type, const Entity entity) {
+Component& Scene::Components::add(const Type& type, const Entity& entity) {
     return storages_.at(type)->add(entity);
 }
 
-void Scene::Components::remove(const Entity entity) {
+void Scene::Components::remove(const Entity& entity) {
     for (auto& [type, storage] : storages_) {
         storage->remove(entity);
     }
 }
 
-void Scene::Components::remove(const type_index type, const Entity entity) {
+void Scene::Components::remove(const Type& type, const Entity& entity) {
     return storages_.at(type)->remove(entity);
 }
 
-Component& Scene::Components::at(const type_index type, const Entity entity) const {
+Component& Scene::Components::at(const Type& type, const Entity& entity) const {
     return storages_.at(type)->at(entity);
 }
 
-Component* const Scene::Components::find(const type_index type, const Entity entity) const {
+Component* const Scene::Components::find(const Type& type, const Entity& entity) const {
     return storages_.at(type)->find(entity);
 }
 
-map<const type_index, IStorage* const>::const_iterator Scene::Components::begin() const {
+map<const Type, IStorage* const>::const_iterator Scene::Components::begin() const {
     return storages_.begin();
 }
 
-map<const type_index, IStorage* const>::const_iterator Scene::Components::end() const {
+map<const Type, IStorage* const>::const_iterator Scene::Components::end() const {
     return storages_.end();
 }
 
+Scene::Entities& Scene::entities() {
+    return entities_;
+}
+
+Scene::Components& Scene::components() {
+    return components_;
+}
+
 Scene::Scene()
-    : entities(*this)
-    , components(*this) {}
+    : entities_(*this)
+    , components_(*this) {}
     
 const Data Scene::serialize() const {
     Data data;
 
     Data entitiesData;
-    for (auto& entity : entities) {
+    for (auto& entity : entities_) {
         string entityId = boost::uuids::to_string(entity.id());
         entitiesData.push_back(entityId);
     }
 
     Data componentsData;
-    for (auto& [type, storage] : components) {
-        
-        // TODO: Extract this to a reflection library?
-        int status;
-        char* typeName = abi::__cxa_demangle(type.name(), 0, 0, &status);
+    for (auto& [type, storage] : components_) {
+        string typeName = type.name();
 
         Data storageData;
         Storage<Component>& componentStorage = *static_cast<Storage<Component>*>(storage);
@@ -121,7 +124,7 @@ const Data Scene::serialize() const {
 
 void Scene::deserialize(const Data& data) {
 
-    Contexts::Context<map<const Identifier, const Entity>>& context = Serialization::Contexts().instantiate<map<const Identifier, const Entity>>();
+    Context<ContextType>& context = Contexts::Instantiate<ContextType>();
 
     Data entitiesData = data["entities"];
     Data componentsData = data["components"];
@@ -129,20 +132,18 @@ void Scene::deserialize(const Data& data) {
     for (auto& entityIdData : entitiesData) {
         const string entityIdString = entityIdData.get<string>();
         const Identifier id = strife::common::ToIdentifier(entityIdString);
-        const Entity entity = entities.add();
+        const Entity entity = entities_.add();
         context.items().insert({id, entity});
     }
 
     for (auto& [typeName, storageData] : componentsData.items()) {
-        const std::type_index type = components.type(typeName);
-        IStorage& storage = components.at(type);
+        const Type& type = Type::Of(typeName);
+        IStorage& storage = components_.at(type);
         for (auto& [entityIdString, componentData] : storageData.items()) {
             const Identifier id = strife::common::ToIdentifier(entityIdString);
             const Entity entity = context.items().at(id);
             for (auto& [keyString, valueData] : componentData.items()) {
-                if (Serialization::IsReference(valueData)) {
-                    context.apply(valueData);
-                }
+                context.apply(valueData);
             }
 
             Component& component = storage.add(entity);

@@ -1,13 +1,8 @@
 #pragma once
 
 #include <map>
-#include "serialization/data.h"
-#include "identifier.h"
-#include "iterator.h"
 #include "component.h"
 #include "entity.h"
-
-#include <iostream>
 
 namespace strife {
     namespace core {
@@ -19,10 +14,10 @@ namespace strife {
             IStorage() = default;
             virtual ~IStorage() = default;
             
-            virtual Component& add(const Entity entity) = 0;
-            virtual void remove(const Entity entity) = 0;
-            virtual Component& at(const Entity entity) = 0;
-            virtual Component* const find(const Entity entity) = 0;
+            virtual Component& add(const Entity& entity) = 0;
+            virtual void remove(const Entity& entity) = 0;
+            virtual Component& at(const Entity& entity) = 0;
+            virtual Component* const find(const Entity& entity) = 0;
             
         };
         
@@ -31,7 +26,7 @@ namespace strife {
 
         public:
 
-            using Iterator = typename std::map<Entity, C>::iterator;
+            using Iterator = typename std::map<const Entity, C>::iterator;
             
         public:
         
@@ -40,19 +35,19 @@ namespace strife {
 
             ~Storage() = default;
             
-            C& add(const Entity entity) {
+            C& add(const Entity& entity) {
                 return components_.emplace(entity, entity).first->second;
             }
             
-            void remove(const Entity entity) {
+            void remove(const Entity& entity) {
                 components_.erase(entity);
             }
             
-            C& at(const Entity entity) {
+            C& at(const Entity& entity) {
                 return components_.at(entity);
             }
             
-            C* const find(const Entity entity) {
+            C* const find(const Entity& entity) {
                 auto iterator = components_.find(entity);
                 return iterator != components_.end()
                     ? &iterator->second
@@ -69,7 +64,7 @@ namespace strife {
             
         private:
             
-            std::map<Entity, C> components_;
+            std::map<const Entity, C> components_;
         
         };
         

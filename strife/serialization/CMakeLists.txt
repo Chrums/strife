@@ -1,5 +1,19 @@
 cmake_minimum_required(VERSION 3.11.0)
-project(core)
+project(serialization)
+
+include(FetchContent)
+
+FetchContent_Declare(json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.9.0
+)
+
+FetchContent_GetProperties(json)
+
+if(NOT json_POPULATED)
+    FetchContent_Populate(json)
+    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 if(EMSCRIPTEN)
   set(CMAKE_TOOLCHAIN_FILE "${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake")
@@ -20,11 +34,11 @@ else()
     )
 endif()
 
-file(GLOB_RECURSE CORE_INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
-file(GLOB_RECURSE CORE_SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+file(GLOB_RECURSE SERIALIZATION_INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
+file(GLOB_RECURSE SERIALIZATION_SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
-add_library(${PROJECT_NAME} ${CORE_SOURCE_FILES})
-add_library(strife::core ALIAS ${PROJECT_NAME})
+add_library(${PROJECT_NAME} ${SERIALIZATION_SOURCE_FILES})
+add_library(strife::serialization ALIAS ${PROJECT_NAME})
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
@@ -37,16 +51,16 @@ if(EMSCRIPTEN)
     target_link_libraries(${PROJECT_NAME}
         libboost_system.a
         libboost_filesystem.a
-        strife::reflection
+        nlohmann_json::nlohmann_json
+        strife::math
         strife::common
-        strife::serialization
     )
 else()
     target_link_libraries(${PROJECT_NAME}
         Boost::system
         Boost::filesystem
-        strife::reflection
+        nlohmann_json::nlohmann_json
+        strife::math
         strife::common
-        strife::serialization
     )
 endif()

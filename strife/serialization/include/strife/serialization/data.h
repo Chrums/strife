@@ -1,10 +1,9 @@
 #pragma once
 
-#include <string>
 #include <nlohmann/json.hpp>
 
 namespace strife {
-    namespace common {
+    namespace serialization {
         
         using Data = nlohmann::json;
         

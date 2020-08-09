@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <string>
 #include <math.h>
 
 #include <iostream>
@@ -32,6 +33,27 @@ namespace strife {
                 }
 
                 return lengthSquared;
+            }
+
+            Vector(const int size)
+                : values(size) {}
+                
+            Vector(const Vector& vector)
+                : values(vector.size()) {
+                const int size = values.size();
+                for (int index = 0; index < size; ++index) {
+                    values[index] = vector.values[index];
+                }
+            }
+
+            ~Vector() = default;
+
+            T& operator[](const int& index) {
+                return values[index];
+            }
+
+            T operator[](const int& index) const {
+                return values[index];
             }
 
             const float distance(const Vector& vector) const {
@@ -116,23 +138,33 @@ namespace strife {
                 return *this;
             }
 
-        // protected:
+        protected:
 
             std::vector<T> values;
-
-            Vector(const int size)
-                : values(size) {}
-            Vector(const Vector& vector)
-                : values(vector.size()) {
-                const int size = values.size();
-                for (int index = 0; index < size; ++index) {
-                    values[index] = vector.values[index];
-                }
-            }
-
-            ~Vector() = default;
 
         };
 
     }
+}
+
+namespace nlohmann {
+
+    template <class T>
+    struct adl_serializer<strife::math::Vector<T>> {
+
+        static void to_json(nlohmann::json& json, const strife::math::Vector<T>& vector) {
+            for (int index = 0; index < vector.size(); ++index) {
+                json[index] = vector[index];
+            }
+        }
+
+        static void from_json(const nlohmann::json& json, strife::math::Vector<T>& vector) {
+            for (auto& [indexString, value] : json.items()) {
+                int index = std::stoi(indexString);
+                vector[index] = value.get<T>();
+            }
+        }
+
+    };
+    
 }

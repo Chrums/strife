@@ -5,14 +5,18 @@
 #include <string>
 #include <typeindex>
 #include <cxxabi.h>
-#include "storage.h"
 #include "unique.h"
+#include "strife/serialization/data.h"
+#include "strife/reflection/type.h"
+#include "storage.h"
 
 namespace strife {
     namespace core {
+
+        using ContextType = std::map<const common::Identifier, const Entity>;
         
         class Scene : public common::Unique {
-            
+
         public:
         
             class Entities {
@@ -43,83 +47,69 @@ namespace strife {
                 Components(Scene& scene);
                 ~Components();
 
-                const std::type_index type(std::string typeName) const;
-
-                IStorage& at(const std::type_index type) const;
-                IStorage* const find(const std::type_index type) const;
+                IStorage& at(const reflection::Type& type) const;
+                IStorage* const find(const reflection::Type& type) const;
                 
-                Component& add(const std::type_index type, const Entity entity);
-                void remove(const Entity entity);
-                void remove(const std::type_index type, const Entity entity);
-                Component& at(const std::type_index type, const Entity entity) const;
-                Component* const find(const std::type_index type, const Entity entity) const;
+                Component& add(const reflection::Type& type, const Entity& entity);
+                void remove(const Entity& entity);
+                void remove(const reflection::Type& type, const Entity& entity);
+                Component& at(const reflection::Type& type, const Entity& entity) const;
+                Component* const find(const reflection::Type& type, const Entity& entity) const;
 
-                std::map<const std::type_index, IStorage* const>::const_iterator begin() const;
-                std::map<const std::type_index, IStorage* const>::const_iterator end() const;
+                std::map<const reflection::Type, IStorage* const>::const_iterator begin() const;
+                std::map<const reflection::Type, IStorage* const>::const_iterator end() const;
                 
                 template <class C>
                 Storage<C>& add() {
-                    std::type_index type(typeid(C));
+                    const reflection::Type& type = reflection::Type::Of<C>();
                     Storage<C>* const storage = new Storage<C>();
-                    
-                    // TODO: Extract this to a reflection library?
-                    int status;
-                    std::string typeName = std::string(abi::__cxa_demangle(type.name(), 0, 0, &status));
-                    types_.insert({typeName, type});
-
                     storages_.insert({type, storage});
                     return *storage;
                 }
                 
                 template <class C>
                 void remove() {
-                    std::type_index type(typeid(C));
-
-                    // TODO: Extract this to a reflection library?
-                    int status;
-                    std::string typeName = std::string(abi::__cxa_demangle(type.name(), 0, 0, &status));
-                    types_.erase(typeName);
-
+                    const reflection::Type& type = reflection::Type::Of<C>();
                     storages_.erase(type);
                 }
                 
                 template <class C>
                 Storage<C>& at() const {
-                    std::type_index type(typeid(C));
+                    const reflection::Type& type = reflection::Type::Of<C>();
                     IStorage& storage = at(type);
                     return static_cast<Storage<C>&>(storage);
                 }
 
                 template <class C>
                 Storage<C>* const find() const {
-                    std::type_index type(typeid(C));
+                    const reflection::Type& type = reflection::Type::Of<C>();
                     IStorage* const storage = find(type);
                     return static_cast<Storage<C>* const>(storage);
                 }
                 
                 template <class C>
                 C& add(const Entity entity) {
-                    std::type_index type(typeid(C));
+                    const reflection::Type& type = reflection::Type::Of<C>();
                     Component& component = add(type, entity);
                     return static_cast<C&>(component);
                 }
                 
                 template <class C>
                 void remove(const Entity entity) {
-                    std::type_index type(typeid(C));
+                    const reflection::Type& type = reflection::Type::Of<C>();
                     remove(type, entity);
                 }
                 
                 template <class C>
                 C& at(const Entity entity) const {
-                    std::type_index type(typeid(C));
+                    const reflection::Type& type = reflection::Type::Of<C>();
                     Component& component = at(type, entity);
                     return static_cast<C&>(component);
                 }
                 
                 template <class C>
                 C* const find(const Entity entity) const {
-                    std::type_index type(typeid(C));
+                    const reflection::Type& type = reflection::Type::Of<C>();
                     Component* const component = find(type, entity);
                     return static_cast<C* const>(component);
                 }
@@ -128,21 +118,25 @@ namespace strife {
             
                 Scene& scene_;
 
-                std::map<const std::string, std::type_index> types_;
-                std::map<const std::type_index, IStorage* const> storages_;
+                std::map<const reflection::Type, IStorage* const> storages_;
             
             };
 
         public:
             
-            Entities entities;
-            Components components;
+            Entities& entities();
+            Components& components();
             
             Scene();
             ~Scene() = default;
 
-            const common::Data serialize() const;
-            void deserialize(const common::Data& data);
+            const serialization::Data serialize() const;
+            void deserialize(const serialization::Data& data);
+
+        private:
+
+            Entities entities_;
+            Components components_;
             
         };
         
