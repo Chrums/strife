@@ -6,7 +6,6 @@
 #include "strife/serialization/contexts.h"
 
 #define TYPE "__TYPE__"
-#define ENTITY "__ENTITY__"
 #define IDENTIFIER "__IDENTIFIER__"
 
 using namespace std;
@@ -38,7 +37,7 @@ Component* const Entity::Components::find(const Type& type) const {
 }
 
 bool Entity::Is(const Data& data) {
-	return data.is_object() && data[TYPE].is_string() && data[TYPE].get<string>() == ENTITY;
+	return data.is_object() && data[TYPE].is_string() && data[TYPE].get<string>() == Type::Of<Entity>().name();
 }
 
 const Identifier Entity::Resolve(const Data& data) {
@@ -84,7 +83,7 @@ bool Entity::operator!=(const Entity& entity) const {
 }
 
 void Entity::apply(Data& data) const {
-	data[TYPE] = ENTITY;
+	data[TYPE] = Type::Of<Entity>().name();
 	data[IDENTIFIER] = strife::common::ToString(id_);
 }
 

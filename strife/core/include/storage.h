@@ -13,6 +13,8 @@ namespace strife {
             
             IStorage() = default;
             virtual ~IStorage() = default;
+
+            virtual IStorage* copy() const = 0;
             
             virtual Component& add(const Entity& entity) = 0;
             virtual void remove(const Entity& entity) = 0;
@@ -23,17 +25,16 @@ namespace strife {
         
         template <class C>
         class Storage : public IStorage {
-
-        public:
-
-            using Iterator = typename std::map<const Entity, C>::iterator;
             
         public:
         
-            Storage()
-                : IStorage() {}
-
+            Storage() = default;
             ~Storage() = default;
+
+            IStorage* copy() const {
+                // TODO: Copy the components into the new Storage...
+                return new Storage();
+            }
             
             C& add(const Entity& entity) {
                 return components_.emplace(entity, entity).first->second;
@@ -48,17 +49,17 @@ namespace strife {
             }
             
             C* const find(const Entity& entity) {
-                auto iterator = components_.find(entity);
+                typename std::map<const Entity, C>::iterator iterator = components_.find(entity);
                 return iterator != components_.end()
                     ? &iterator->second
                     : nullptr;
             }
             
-            Iterator begin() {
+            typename std::map<const Entity, C>::iterator begin() {
                 return components_.begin();
             }
             
-            Iterator end() {
+            typename std::map<const Entity, C>::iterator end() {
                 return components_.end();
             }
             

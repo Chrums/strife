@@ -2,13 +2,22 @@
 
 #include "events.h"
 
+using namespace std;
+using namespace strife::reflection;
 using namespace strife::core;
 using namespace strife::common;
-using namespace std;
     
 void loop(void* context) {
 	Engine* const engine = static_cast<Engine*>(context);
 	engine->update();
+}
+
+map<const Type, const IStorage* const>::iterator Engine::Components::begin() {
+	return dummies_.begin();
+}
+
+map<const Type, const IStorage* const>::iterator Engine::Components::end() {
+	return dummies_.end();
 }
 
 Engine::Scenes::Scenes(Engine& engine)

@@ -25,6 +25,8 @@ namespace strife {
             
                 Entities(Scene& scene);
                 ~Entities() = default;
+
+                Entities& operator=(const Entities& entities);
                 
                 const Entity add();
                 void remove(const Entity entity);
@@ -47,8 +49,9 @@ namespace strife {
                 Components(Scene& scene);
                 ~Components();
 
+                Components& operator=(const Components& components);
+
                 IStorage& at(const reflection::Type& type) const;
-                IStorage* const find(const reflection::Type& type) const;
                 
                 Component& add(const reflection::Type& type, const Entity& entity);
                 void remove(const Entity& entity);
@@ -60,31 +63,10 @@ namespace strife {
                 std::map<const reflection::Type, IStorage* const>::const_iterator end() const;
                 
                 template <class C>
-                Storage<C>& add() {
-                    const reflection::Type& type = reflection::Type::Of<C>();
-                    Storage<C>* const storage = new Storage<C>();
-                    storages_.insert({type, storage});
-                    return *storage;
-                }
-                
-                template <class C>
-                void remove() {
-                    const reflection::Type& type = reflection::Type::Of<C>();
-                    storages_.erase(type);
-                }
-                
-                template <class C>
                 Storage<C>& at() const {
                     const reflection::Type& type = reflection::Type::Of<C>();
                     IStorage& storage = at(type);
                     return static_cast<Storage<C>&>(storage);
-                }
-
-                template <class C>
-                Storage<C>* const find() const {
-                    const reflection::Type& type = reflection::Type::Of<C>();
-                    IStorage* const storage = find(type);
-                    return static_cast<Storage<C>* const>(storage);
                 }
                 
                 template <class C>
@@ -117,21 +99,22 @@ namespace strife {
             private:
             
                 Scene& scene_;
-
                 std::map<const reflection::Type, IStorage* const> storages_;
             
             };
 
         public:
             
+            const Entities& entities() const;
             Entities& entities();
+
+            const Components& components() const;
             Components& components();
             
             Scene();
             ~Scene() = default;
 
-            const serialization::Data serialize() const;
-            void deserialize(const serialization::Data& data);
+            Scene& operator=(const Scene& scene);
 
         private:
 
@@ -139,6 +122,9 @@ namespace strife {
             Components components_;
             
         };
+
+		void to_json(serialization::Data& data, const Scene& scene);
+		void from_json(const serialization::Data& data, Scene& scene);
         
     }
 }

@@ -1,15 +1,18 @@
 cmake_minimum_required(VERSION 3.11.0)
 project(common)
 
-if(EMSCRIPTEN)
-  set(CMAKE_TOOLCHAIN_FILE "${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake")
-endif(EMSCRIPTEN)
-
 if(CMAKE_CXX_COMPILER MATCHES "em\\+\\+$")
     set(EMSCRIPTEN TRUE)
 else()
     set(EMSCRIPTEN FALSE)
 endif()
+
+if(EMSCRIPTEN)
+    set(CMAKE_TOOLCHAIN_FILE "${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WASM=1 -s DEMANGLE_SUPPORT=1 -s USE_SDL=2 -s DISABLE_EXCEPTION_CATCHING=0 -s EXCEPTION_DEBUG=1" CACHE STRING "")
+endif(EMSCRIPTEN)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2" CACHE STRING "")
 
 if(EMSCRIPTEN)
     link_directories(${Boost_LIBRARY_DIRS})
@@ -39,6 +42,7 @@ if(EMSCRIPTEN)
         libboost_filesystem.a
         nlohmann_json::nlohmann_json
         strife::math
+        "-s USE_SDL=2"
     )
 else()
     target_link_libraries(${PROJECT_NAME}
@@ -46,5 +50,11 @@ else()
         Boost::filesystem
         nlohmann_json::nlohmann_json
         strife::math
+    )
+endif()
+
+if(EMSCRIPTEN)
+    set_target_properties(common PROPERTIES
+        LINK_FLAGS "-s WASM=1 -s DEMANGLE_SUPPORT=1 -s USE_SDL=2 -s DISABLE_EXCEPTION_CATCHING=0"
     )
 endif()

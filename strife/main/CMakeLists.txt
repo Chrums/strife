@@ -1,15 +1,16 @@
 cmake_minimum_required(VERSION 3.11.0)
 project(main)
 
-if(EMSCRIPTEN)
-  set(CMAKE_TOOLCHAIN_FILE "${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake")
-endif(EMSCRIPTEN)
-
 if(CMAKE_CXX_COMPILER MATCHES "em\\+\\+$")
     set(EMSCRIPTEN TRUE)
 else()
     set(EMSCRIPTEN FALSE)
 endif()
+
+if(EMSCRIPTEN)
+    set(CMAKE_TOOLCHAIN_FILE "${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WASM=1 -s DEMANGLE_SUPPORT=1 -s USE_SDL=2 -s DISABLE_EXCEPTION_CATCHING=0 -s EXCEPTION_DEBUG=1" CACHE STRING "")
+endif(EMSCRIPTEN)
 
 if(EMSCRIPTEN)
     link_directories(${Boost_LIBRARY_DIRS})
@@ -34,12 +35,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 if(EMSCRIPTEN)
-    set_target_properties(main PROPERTIES
-        LINK_FLAGS "-s WASM=1 -s DEMANGLE_SUPPORT=1 -s USE_SDL=2 -s DISABLE_EXCEPTION_CATCHING=0"
-    )
-endif()
-
-if(EMSCRIPTEN)
     target_link_libraries(${PROJECT_NAME}
         libboost_system.a
         libboost_filesystem.a
@@ -57,5 +52,8 @@ else()
     )
 endif()
 
-install(TARGETS main DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(FILES ${MAIN_INCLUDE_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/main)
+if(EMSCRIPTEN)
+    set_target_properties(main PROPERTIES
+        LINK_FLAGS "-s WASM=1 -s DEMANGLE_SUPPORT=1 -s USE_SDL=2 -s DISABLE_EXCEPTION_CATCHING=0"
+    )
+endif()

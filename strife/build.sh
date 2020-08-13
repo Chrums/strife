@@ -4,7 +4,7 @@ set -e
 
 if [[ $* == *--clean* ]]
 then
-    rm -rf /project/build/*
+    rm -rf /project/strife/build/*
 fi
 
 if [[ $* == *--emscripten* ]]

@@ -11,6 +11,8 @@
 #include "time/timer.h"
 #include "scene.h"
 #include "system.h"
+#include "storage.h"
+#include "strife/reflection/type.h"
 
 namespace strife {
     namespace core {
@@ -18,6 +20,35 @@ namespace strife {
         class Engine {
         
         public:
+
+            class Components {
+
+            public:
+
+                Components() = default;
+                ~Components() = default;
+
+                std::map<const reflection::Type, const IStorage* const>::iterator begin();
+                std::map<const reflection::Type, const IStorage* const>::iterator end();
+
+                template <class C>
+                void add() {
+                    const reflection::Type& type = reflection::Type::Of<C>();
+                    Storage<C>* const storage = new Storage<C>();
+                    dummies_.insert({type, storage});
+                }
+
+                template <class C>
+                void remove() {
+                    const reflection::Type& type = reflection::Type::Of<C>();
+                    dummies_.erase(type);
+                }
+
+            private:
+
+                std::map<const reflection::Type, const IStorage* const> dummies_;
+
+            };
             
             class Scenes {
                 
@@ -94,6 +125,7 @@ namespace strife {
             common::Timer::Value time;
             common::Action<const SDL_Event&> inputEvent;
             
+            Components components;
             Scenes scenes;
             Systems systems;
             
