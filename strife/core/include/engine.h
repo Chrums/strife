@@ -6,7 +6,6 @@
 #include <string>
 #include <typeindex>
 #include <SDL2/SDL.h>
-#include "action.h"
 #include "dispatch/dispatcher.h"
 #include "time/timer.h"
 #include "scene.h"
@@ -26,7 +25,7 @@ namespace strife {
             public:
 
                 Components() = default;
-                ~Components() = default;
+                ~Components();
 
                 std::map<const reflection::Type, const IStorage* const>::iterator begin();
                 std::map<const reflection::Type, const IStorage* const>::iterator end();
@@ -35,18 +34,18 @@ namespace strife {
                 void add() {
                     const reflection::Type& type = reflection::Type::Of<C>();
                     Storage<C>* const storage = new Storage<C>();
-                    dummies_.insert({type, storage});
+                    storages_.insert({type, storage});
                 }
 
                 template <class C>
                 void remove() {
                     const reflection::Type& type = reflection::Type::Of<C>();
-                    dummies_.erase(type);
+                    storages_.erase(type);
                 }
 
             private:
 
-                std::map<const reflection::Type, const IStorage* const> dummies_;
+                std::map<const reflection::Type, const IStorage* const> storages_;
 
             };
             
@@ -123,7 +122,6 @@ namespace strife {
             
             common::Dispatcher dispatcher;
             common::Timer::Value time;
-            common::Action<const SDL_Event&> inputEvent;
             
             Components components;
             Scenes scenes;

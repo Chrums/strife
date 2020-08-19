@@ -4,6 +4,7 @@
 
 using namespace std;
 using namespace strife::reflection;
+using namespace strife::serialization;
 using namespace strife::core;
 using namespace strife::common;
     
@@ -12,12 +13,18 @@ void loop(void* context) {
 	engine->update();
 }
 
+Engine::Components::~Components() {
+	for (auto& [type, storage] : storages_) {
+		delete storage;
+	}
+}
+
 map<const Type, const IStorage* const>::iterator Engine::Components::begin() {
-	return dummies_.begin();
+	return storages_.begin();
 }
 
 map<const Type, const IStorage* const>::iterator Engine::Components::end() {
-	return dummies_.end();
+	return storages_.end();
 }
 
 Engine::Scenes::Scenes(Engine& engine)
@@ -82,11 +89,12 @@ void Engine::update() {
 			// TODO: Implement this...
 		}
 
-        inputEvent(event);
+		InputEvent inputEvent(event);
+        dispatcher.emit(inputEvent);
     }
 	
-	UpdateEvent updatEvent;
-	dispatcher.emit(updatEvent);
+	UpdateEvent updateEvent;
+	dispatcher.emit(updateEvent);
 }
 
 Engine* Engine::instance_ = nullptr;

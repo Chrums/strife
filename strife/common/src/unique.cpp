@@ -42,3 +42,7 @@ bool Unique::operator==(const Unique& unique) const {
 bool Unique::operator<(const Unique& unique) const {
 	return id_ < unique.id_;
 }
+
+void Unique::id(const Identifier& id) {
+	id_ = id;
+}

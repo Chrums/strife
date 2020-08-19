@@ -4,8 +4,8 @@ using namespace std;
 using namespace strife::common;
 using namespace strife::serialization;
 
-IContext& Contexts::Instantiate() {
-    return Contexts::Instantiate<void*>();
+IContext& Contexts::Instantiate(const Data& data) {
+    return Contexts::Instantiate<void*>(data);
 }
 
 void Contexts::Dispose(const IContext& context) {
@@ -17,17 +17,15 @@ void Contexts::Dispose(const IContext& context) {
 }
 
 IContext& Contexts::Resolve(const Data& data) {
-    const std::string idString = data[CONTEXT].get<std::string>();
-    const strife::common::Identifier id = strife::common::ToIdentifier(idString);
-    IContext* const context = Contexts::Contexts_.at(id);
+    const strife::common::Identifier contextId = data[CONTEXT_INDEX].get<strife::common::Identifier>();
+    IContext* const context = Contexts::Contexts_.at(contextId);
     return *context;
 }
 
 bool Contexts::Exists(const Data& data) {
-    if (data.is_object() && data[CONTEXT].is_string()) {
-        const std::string idString = data[CONTEXT].get<std::string>();
-        const strife::common::Identifier id = strife::common::ToIdentifier(idString);
-        std::map<const strife::common::Identifier, IContext* const>::iterator iterator = Contexts::Contexts_.find(id);
+    if (data.is_object() && !data[CONTEXT_INDEX].is_null()) {
+        const strife::common::Identifier contextId = data[CONTEXT_INDEX].get<strife::common::Identifier>();
+        std::map<const strife::common::Identifier, IContext* const>::const_iterator iterator = Contexts::Contexts_.find(contextId);
         return iterator != Contexts::Contexts_.end();
     } else {
         return false;

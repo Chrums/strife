@@ -5,7 +5,7 @@
 #include "strife/serialization/context.h"
 #include "strife/serialization/data.h"
 
-#define CONTEXT "__CONTEXT__"
+#define CONTEXT_INDEX "__CONTEXT__"
 
 namespace strife {
     namespace serialization {
@@ -14,14 +14,14 @@ namespace strife {
 
         public:
 
-            static IContext& Instantiate();
+            static IContext& Instantiate(const Data& data);
             static void Dispose(const IContext& context);
             static IContext& Resolve(const Data& data);
             static bool Exists(const Data& data);
 
             template <class U>
-            static Context<U>& Instantiate() {
-                Context<U>* context = new Context<U>();
+            static Context<U>& Instantiate(const Data& data) {
+                Context<U>* context = new Context<U>(data);
                 const strife::common::Identifier& id = context->id();
                 Contexts::Contexts_.insert({id, context});
                 return *context;

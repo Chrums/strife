@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL2/SDL.h>
 #include "dispatch/message.h"
 #include "scene.h"
 
@@ -64,6 +65,24 @@ namespace strife {
             Scene* const from_;
             Scene* const to_;
             
+        };
+
+        class InputEvent : public common::Message {
+
+        public:
+
+            const SDL_Event& event() const {
+                return event_;
+            }
+
+            InputEvent(SDL_Event& event)
+                : common::Message()
+                , event_(event) {}
+
+        private:
+
+            const SDL_Event& event_;
+
         };
         
         class UpdateEvent : public common::Message {

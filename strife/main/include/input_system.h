@@ -21,7 +21,7 @@ namespace strife {
 
         private:
 
-            void process(const SDL_Event& event);
+            void process(const core::InputEvent& event);
 
         };
         

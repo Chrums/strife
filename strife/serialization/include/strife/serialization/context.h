@@ -11,16 +11,20 @@ namespace strife {
 
         public:
 
-            static void Apply(Data& data);
-            static bool Is(const Data& data);
+            static void Require(Data& data);
+
+            const Data data;
 
             void dispose();
-            void apply(Data& data) const;
 
         protected:
 
-            IContext() = default;
+            IContext(const Data& data);
             ~IContext() = default;
+
+        private:
+
+            const Data apply(const Data& data) const;
 
         };
 
@@ -29,16 +33,21 @@ namespace strife {
 
         public:
 
-            T& items() {
-                return items_;
+            const T& value() const {
+                return value_;
             }
 
-            Context() = default;
+            T& value() {
+                return value_;
+            }
+
+            Context(const Data& data)
+                : IContext(data) {}
             ~Context() = default;
 
         private:
 
-            T items_;
+            T value_;
 
         };
 

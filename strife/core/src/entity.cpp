@@ -5,8 +5,7 @@
 #include "storage.h"
 #include "strife/serialization/contexts.h"
 
-#define TYPE "__TYPE__"
-#define IDENTIFIER "__IDENTIFIER__"
+#define IDENTIFIER_INDEX "__IDENTIFIER__"
 
 using namespace std;
 using namespace strife::reflection;
@@ -36,17 +35,16 @@ Component* const Entity::Components::find(const Type& type) const {
 	return entity_.scene_->components().find(type, entity_);
 }
 
-bool Entity::Is(const Data& data) {
-	return data.is_object() && data[TYPE].is_string() && data[TYPE].get<string>() == Type::Of<Entity>().name();
-}
-
-const Identifier Entity::Resolve(const Data& data) {
-	string id = data[IDENTIFIER].get<string>();
-	return strife::common::ToIdentifier(id);
-}
-
-Scene& Entity::scene() const {
+const Scene& Entity::scene() const {
 	return *scene_;
+}
+
+Scene& Entity::scene() {
+	return *scene_;
+}
+
+const Entity::Components& Entity::components() const {
+	return components_;
 }
 
 Entity::Components& Entity::components() {
@@ -69,40 +67,46 @@ Entity::Entity(Scene& scene)
     , components_(*this) {}
     
 Entity& Entity::operator=(const Entity& entity) {
-	id_ = entity.id_;
+	id(entity.id());
 	scene_ = entity.scene_;
 	return *this;
 }
 
 bool Entity::operator==(const Entity& entity) const {
-	return id_ == entity.id_;
+	return id() == entity.id();
 }
 
 bool Entity::operator!=(const Entity& entity) const {
-	return !(id_ == entity.id_);
-}
-
-void Entity::apply(Data& data) const {
-	data[TYPE] = Type::Of<Entity>().name();
-	data[IDENTIFIER] = strife::common::ToString(id_);
+	return !(id() == entity.id());
 }
 
 void Entity::dispose() {
 	scene_->entities().remove(*this);
 }
 
+const Data Entity::serialize() const {
+	Data data;
+	IContext::Require(data);
+	data[IDENTIFIER_INDEX] = id();
+	return data;
+}
+
+void Entity::deserialize(const Data& data) {
+	Context<ContextType>& context = Contexts::Resolve<ContextType>(data);
+
+	const Identifier& entityId = data[IDENTIFIER_INDEX].get<Identifier>();
+	ContextType::iterator iterator = context.value().find(entityId);
+	if (iterator != context.value().end()) {
+		*this = iterator->second;
+	} else {
+		context.value().insert({entityId, *this});
+	}
+}
+
 void strife::core::to_json(Data& data, const Entity& entity) {
-	IContext::Apply(data);
-	entity.apply(data);
+	data = entity.serialize();
 }
 
 void strife::core::from_json(const Data& data, Entity& entity) {
-	if (Contexts::Exists(data)) {
-		Context<ContextType>& context = Contexts::Resolve<ContextType>(data);
-		const Identifier& id = Entity::Resolve(data);
-		ContextType::iterator iterator = context.items().find(id);
-		if (iterator != context.items().end()) {
-			entity = iterator->second;
-		}
-	}
+	entity.deserialize(data);
 }

@@ -98,34 +98,12 @@ private:
     InputSystem& inputSystem_;
 
     void onUpdate(TestComponent& testComponent) {
-        
+        cout << inputSystem_.inputManager.mouse().position().x << endl;
     }
     
 };
 
 int main(int argc, char* argv[]) {
-
-    const Type& type = Type::Of<int>();
-    cout << type.name() << endl;
-
-    const Type& inverse = Type::Of(type.name());
-    cout << type.name() << endl;
-
-    // Vector<int> v0(2);
-    // v0[0] = 1;
-    // v0[1] = 1;
-    
-    // Vector<int> v1(2);
-    // v1[0] = 3;
-    // v1[1] = 3;
-
-    // cout << v0.distanceSquared(v1) << endl;
-
-    // Data data = v0;
-    // cout << data << endl;
-
-    // Vector<int> v2(2);
-    // v2 = data.get<Vector<int>>();
     
     Engine& engine = Engine::Instance();
 
@@ -150,17 +128,8 @@ int main(int argc, char* argv[]) {
     tc1.e = e0;
     tc2.e = e0;
 
-    Data d0 = s0;
-    cout << d0 << endl << endl;
-    Scene s1 = d0.get<Scene>();
-    Entity e3 = s1.entities().add();
-    TestComponent& tc3 = e3.components().add<TestComponent>();
-    tc3.b = 3;
-
-    Data d1 = s1;
-    cout << d1 << endl;
-
-    // cout << Data(scene2) << endl;
+    Data d0 = s0.serialize();
+    s0.deserialize(d0);
 
     // engine.run();
     

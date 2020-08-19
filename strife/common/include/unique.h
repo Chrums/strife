@@ -34,6 +34,10 @@ namespace strife {
 
         protected:
 
+            void id(const Identifier& id);
+
+        private:
+
             Identifier id_;
             
         };

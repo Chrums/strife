@@ -25,20 +25,21 @@ namespace strife {
             
                 Entities(Scene& scene);
                 ~Entities() = default;
-
-                Entities& operator=(const Entities& entities);
                 
-                const Entity add();
-                void remove(const Entity entity);
+                Entity& add();
+                void remove(const Entity& entity);
 
-                std::set<Entity>::const_iterator begin() const;
-                std::set<Entity>::const_iterator end() const;
+                std::map<const common::Identifier, Entity>::const_iterator begin() const;
+                std::map<const common::Identifier, Entity>::const_iterator end() const;
+
+                const serialization::Data serialize() const;
+                void deserialize(const serialization::Data& data);
                 
             private:
             
                 Scene& scene_;
                 
-                std::set<Entity> entities_;
+                std::map<const common::Identifier, Entity> entities_;
                 
             };
             
@@ -48,8 +49,6 @@ namespace strife {
             
                 Components(Scene& scene);
                 ~Components();
-
-                Components& operator=(const Components& components);
 
                 IStorage& at(const reflection::Type& type) const;
                 
@@ -61,6 +60,9 @@ namespace strife {
 
                 std::map<const reflection::Type, IStorage* const>::const_iterator begin() const;
                 std::map<const reflection::Type, IStorage* const>::const_iterator end() const;
+
+                const serialization::Data serialize() const;
+                void deserialize(const serialization::Data& data);
                 
                 template <class C>
                 Storage<C>& at() const {
@@ -114,7 +116,9 @@ namespace strife {
             Scene();
             ~Scene() = default;
 
-            Scene& operator=(const Scene& scene);
+            void dispose();
+            const serialization::Data serialize() const;
+            void deserialize(const serialization::Data& data);
 
         private:
 

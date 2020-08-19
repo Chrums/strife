@@ -62,12 +62,12 @@ namespace strife {
             };
             
         public:
-
-			static bool Is(const serialization::Data& data);
-			static const common::Identifier Resolve(const serialization::Data& data);
         
-            Scene& scene() const;
-            Components& components();
+            const Scene& scene() const;
+			Scene& scene();
+			
+            const Components& components() const;
+			Components& components();
         
 			Entity();
             Entity(const Entity& entity);
@@ -77,9 +77,10 @@ namespace strife {
 			Entity& operator=(const Entity& entity);
 			bool operator==(const Entity& entity) const;
 			bool operator!=(const Entity& entity) const;
-            
-			void apply(serialization::Data& data) const;
+
             void dispose();
+			const serialization::Data serialize() const;
+			void deserialize(const serialization::Data& data);
 
 		private:
 
