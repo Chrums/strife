@@ -1,8 +1,8 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-#include "system.h"
-#include "input/input_manager.h"
+#include "strife/core/system.h"
+#include "strife/input/input_manager.h"
 
 namespace strife {
     namespace main {
@@ -11,13 +11,13 @@ namespace strife {
             
         public:
 
-            common::InputManager inputManager;
+            input::InputManager inputManager;
             
             InputSystem() = default;
             ~InputSystem() = default;
 
-            virtual void subscribe(common::Dispatcher& dispatcher);
-            virtual void unsubscribe(common::Dispatcher& dispatcher);
+            virtual void subscribe(functional::Dispatcher& dispatcher);
+            virtual void unsubscribe(functional::Dispatcher& dispatcher);
 
         private:
 

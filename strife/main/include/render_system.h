@@ -1,8 +1,8 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-#include "system.h"
-#include "vector2.h"
+#include "strife/core/system.h"
+#include "strife/math/vector2.h"
 
 namespace strife {
     namespace main {

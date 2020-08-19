@@ -2,17 +2,9 @@
 
 #include "strife/serialization/contexts.h"
 
-#include <iostream>
-
 using namespace std;
-using namespace strife::common;
 using namespace strife::serialization;
-
-void IContext::Require(Data& data) {
-    if (data.is_null() || data.is_object()) {
-        data[CONTEXT_INDEX] = Unique::Nil().id();
-    }
-}
+using namespace strife::unique;
 
 IContext::IContext(const Data& data)
     : data(apply(data)) {}

@@ -16,13 +16,15 @@ namespace strife {
 
             static IContext& Instantiate(const Data& data);
             static void Dispose(const IContext& context);
+
+            static void Require(Data& data);
             static IContext& Resolve(const Data& data);
             static bool Exists(const Data& data);
 
             template <class U>
             static Context<U>& Instantiate(const Data& data) {
                 Context<U>* context = new Context<U>(data);
-                const strife::common::Identifier& id = context->id();
+                const strife::unique::Identifier& id = context->id();
                 Contexts::Contexts_.insert({id, context});
                 return *context;
             }
@@ -38,7 +40,7 @@ namespace strife {
 
         private:
 
-            static std::map<const strife::common::Identifier, IContext* const> Contexts_;
+            static std::map<const strife::unique::Identifier, IContext* const> Contexts_;
 
         };
 

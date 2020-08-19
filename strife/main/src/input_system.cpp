@@ -1,9 +1,9 @@
 #include "input_system.h"
 
 using namespace std;
-using namespace strife::main;
-using namespace strife::common;
 using namespace strife::core;
+using namespace strife::main;
+using namespace strife::functional;
      
 void InputSystem::subscribe(Dispatcher& dispatcher) {
     dispatcher.subscribe<InputEvent>(bind(&InputSystem::process, this, placeholders::_1));

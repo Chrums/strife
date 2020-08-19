@@ -1,8 +1,7 @@
 #include "render_system.h"
 
-using namespace strife::main;
-using namespace strife::common;
 using namespace strife::core;
+using namespace strife::main;
 using namespace strife::math;
      
 RenderSystem::RenderSystem(const Vector2& windowDimensions) {

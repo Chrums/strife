@@ -1,14 +1,14 @@
 #include <iostream>
 #include <optional>
 #include <emscripten.h>
-#include "engine.h"
+#include "strife/core/engine.h"
 #include "input_system.h"
 #include "render_system.h"
-#include "action.h"
-#include "vector2.h"
-#include "input/mouse_input.h"
+#include "strife/functional/action.h"
+#include "strife/math/vector2.h"
+#include "strife/input/mouse_input.h"
 #include "strife/serialization/data.h"
-#include "vector.h"
+#include "strife/math/vector.h"
 #include "strife/reflection/type.h"
 
 #include <stdio.h>
@@ -20,7 +20,7 @@ const int SCREEN_HEIGHT = 480;
 using namespace std;
 using namespace strife::reflection;
 using namespace strife::math;
-using namespace strife::common;
+using namespace strife::input;
 using namespace strife::serialization;
 using namespace strife::core;
 using namespace strife::main;

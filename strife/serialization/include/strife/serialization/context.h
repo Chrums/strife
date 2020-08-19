@@ -1,17 +1,15 @@
 #pragma once
 
 #include <map>
-#include "unique.h"
 #include "strife/serialization/data.h"
+#include "strife/unique/unique.h"
 
 namespace strife {
     namespace serialization {
 
-        class IContext : public common::Unique {
+        class IContext : public unique::Unique {
 
         public:
-
-            static void Require(Data& data);
 
             const Data data;
 
