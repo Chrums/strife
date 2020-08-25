@@ -17,7 +17,11 @@ Unique Unique::Random() {
 	return Unique(identifier);
 }
             
-const Identifier Unique::id() const {
+const Identifier& Unique::id() const {
+	return id_;
+}
+
+Identifier& Unique::id() {
 	return id_;
 }
 
@@ -41,8 +45,4 @@ bool Unique::operator==(const Unique& unique) const {
 
 bool Unique::operator<(const Unique& unique) const {
 	return id_ < unique.id_;
-}
-
-void Unique::id(const Identifier& id) {
-	id_ = id;
 }

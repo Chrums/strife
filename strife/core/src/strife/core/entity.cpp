@@ -68,7 +68,7 @@ Entity::Entity(Scene& scene)
     , components_(*this) {}
     
 Entity& Entity::operator=(const Entity& entity) {
-	id(entity.id());
+	id() = entity.id();
 	scene_ = entity.scene_;
 	return *this;
 }
@@ -87,20 +87,21 @@ void Entity::dispose() {
 
 const Data Entity::serialize() const {
 	Data data;
-	Contexts::Require(data); // TODO: Make Contexts::Require and Contexts::Resolve take a std::string index?
+
+	Contexts::Require<Entity>(data);
 	data[IDENTIFIER_INDEX] = id();
+	
 	return data;
 }
 
 void Entity::deserialize(const Data& data) {
-	Context<ContextType>& context = Contexts::Resolve<ContextType>(data);
-
+	Entity::Context& context = Contexts::Resolve<Entity::Context>(data);
 	const Identifier& entityId = data[IDENTIFIER_INDEX].get<Identifier>();
-	ContextType::iterator iterator = context.value().find(entityId);
-	if (iterator != context.value().end()) {
+	Entity::Context::iterator iterator = context.find(entityId);
+	if (iterator != context.end()) {
 		*this = iterator->second;
 	} else {
-		context.value().insert({entityId, *this});
+		context.insert({entityId, *this});
 	}
 }
 

@@ -5,10 +5,9 @@
 #include "input_system.h"
 #include "render_system.h"
 #include "strife/functional/action.h"
-#include "strife/math/vector2.h"
 #include "strife/input/mouse_input.h"
 #include "strife/serialization/data.h"
-#include "strife/math/vector.h"
+#include "strife/math/math.h"
 #include "strife/reflection/type.h"
 
 #include <stdio.h>
@@ -24,6 +23,7 @@ using namespace strife::input;
 using namespace strife::serialization;
 using namespace strife::core;
 using namespace strife::main;
+using namespace strife::events;
 
 class TestComponent : public Component {
     
@@ -73,7 +73,7 @@ public:
 protected:
 
     void onUpdate(const UpdateEvent& updateEvent) {
-        Storage<C>& storage = scene_->components().at<C>();
+        Storage<C>& storage = scene()->components().template at<C>();
         for (auto [entity, component] : storage) {
             onUpdate(component);
         }
@@ -98,38 +98,54 @@ private:
     InputSystem& inputSystem_;
 
     void onUpdate(TestComponent& testComponent) {
-        cout << inputSystem_.inputManager.mouse().position().x << endl;
+        cout << inputSystem_.inputManager.mouse().position().x() << endl;
     }
     
 };
 
 int main(int argc, char* argv[]) {
     
-    Engine& engine = Engine::Instance();
-
-    engine.components.add<TestComponent>();
-
-    engine.systems.add<InputSystem>();
-    engine.systems.add<RenderSystem>(Vector2(640.0f, 480.0f));
-    engine.systems.add<TestSystem>();
+    Vector3f v0 = Vector3f::Zero;
+    v0.y() = 1.0f;
+    Vector3f v1 = Vector3f::Right;
     
-    string path = "...";
-    Scene& s0 = engine.scenes.load(path);
-    Entity e0 = s0.entities().add();
-    TestComponent& tc0 = e0.components().add<TestComponent>();
-    Entity e1 = s0.entities().add();
-    TestComponent& tc1 = e1.components().add<TestComponent>();
-    Entity e2 = s0.entities().add();
-    TestComponent& tc2 = e2.components().add<TestComponent>();
-    engine.scenes.swap(path);
+    Vector3f v2 = v1.cross(v0);
 
-    tc0.a = 1;
+    Matrix2f m0 = Matrix2f::Identity;
+    Matrix2f m1 = Matrix2f::Identity;
 
-    tc1.e = e0;
-    tc2.e = e0;
+    Matrix2f m2 = m0 * 2.0f;
 
-    Data d0 = s0.serialize();
-    s0.deserialize(d0);
+    cout << v2 << endl;
+    cout << m2.trace() << endl;
+
+    // Engine& engine = Engine::Instance();
+
+    // engine.components.add<TestComponent>();
+
+    // engine.systems.add<InputSystem>();
+    // engine.systems.add<RenderSystem>(Vector2i(640, 480));
+    // engine.systems.add<TestSystem>();
+    
+    // string path = "...";
+    // Scene& s0 = engine.scenes.load(path);
+    // Entity e0 = s0.entities().add();
+    // TestComponent& tc0 = e0.components().add<TestComponent>();
+    // Entity e1 = s0.entities().add();
+    // TestComponent& tc1 = e1.components().add<TestComponent>();
+    // Entity e2 = s0.entities().add();
+    // TestComponent& tc2 = e2.components().add<TestComponent>();
+    // engine.scenes.swap(path);
+
+    // tc0.a = 1;
+
+    // tc1.e = e0;
+    // tc2.e = e0;
+
+    // Data d0 = s0.serialize();
+    // cout << d0 << endl;
+    // s0.deserialize(d0);
+    // cout << s0.serialize() << endl;
 
     // engine.run();
     

@@ -4,38 +4,41 @@ using namespace std;
 using namespace strife::serialization;
 using namespace strife::unique;
 
-IContext& Contexts::Instantiate(const Data& data) {
-    return Contexts::Instantiate<void*>(data);
+Context& Contexts::Instantiate(const Data& data) {
+    Context context(data);
+    const Identifier& id = context.id();
+    return Contexts::Contexts_.insert({id, context}).first->second;
 }
 
-void Contexts::Dispose(const IContext& context) {
+void Contexts::Dispose(const Context& context) {
     const Identifier& id = context.id();
-    map<const Identifier, IContext* const>::iterator iterator = Contexts::Contexts_.find(id);
+    map<const Identifier, Context>::iterator iterator = Contexts::Contexts_.find(id);
     if (iterator != Contexts::Contexts_.end()) {
         Contexts::Contexts_.erase(iterator);
     }
 }
 
-void Contexts::Require(Data& data) {
+void Contexts::Require(Data& data, string index) {
     if (data.is_null() || data.is_object()) {
         data[CONTEXT_INDEX] = Unique::Nil().id();
+        Context::Require(data, index);
     }
 }
 
-IContext& Contexts::Resolve(const Data& data) {
+Context& Contexts::Resolve(const Data& data) {
     const Identifier contextId = data[CONTEXT_INDEX].get<Identifier>();
-    IContext* const context = Contexts::Contexts_.at(contextId);
-    return *context;
+    Context& context = Contexts::Contexts_.at(contextId);
+    return context;
 }
 
 bool Contexts::Exists(const Data& data) {
     if (data.is_object() && !data[CONTEXT_INDEX].is_null()) {
         const Identifier contextId = data[CONTEXT_INDEX].get<Identifier>();
-        map<const Identifier, IContext* const>::const_iterator iterator = Contexts::Contexts_.find(contextId);
+        map<const Identifier, Context>::const_iterator iterator = Contexts::Contexts_.find(contextId);
         return iterator != Contexts::Contexts_.end();
     } else {
         return false;
     }
 }
 
-map<const Identifier, IContext* const> Contexts::Contexts_;
+map<const Identifier, Context> Contexts::Contexts_;

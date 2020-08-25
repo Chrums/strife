@@ -3,7 +3,7 @@
 using namespace strife::input;
 using namespace strife::math;
 
-const Vector2& MouseInput::position() const {
+const Vector2i& MouseInput::position() const {
     return position_;
 }
 

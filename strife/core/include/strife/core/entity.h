@@ -1,8 +1,10 @@
 #pragma once
 
+#include <map>
 #include <typeindex>
 #include "strife/reflection/type.h"
 #include "strife/serialization/data.h"
+#include "strife/unique/identifier.h"
 #include "strife/unique/unique.h"
 
 namespace strife {
@@ -12,6 +14,10 @@ namespace strife {
         class Component;
         
         class Entity : public unique::Unique {
+
+		public:
+
+			using Context = std::map<const unique::Identifier, Entity&>;
             
         private:
             

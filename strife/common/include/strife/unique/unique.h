@@ -21,7 +21,8 @@ namespace strife {
             static Unique Nil();
             static Unique Random();
             
-            const Identifier id() const;
+            const Identifier& id() const;
+            Identifier& id();
             
             Unique();
             Unique(const Unique& unique);
@@ -31,10 +32,6 @@ namespace strife {
             Unique& operator=(const Unique& unique);
             bool operator==(const Unique& unique) const;
             bool operator<(const Unique& unique) const;
-
-        protected:
-
-            void id(const Identifier& id);
 
         private:
 

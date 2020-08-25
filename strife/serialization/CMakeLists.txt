@@ -55,6 +55,7 @@ if(EMSCRIPTEN)
         nlohmann_json::nlohmann_json
         strife::math
         strife::common
+        strife::reflection
     )
 else()
     target_link_libraries(${PROJECT_NAME}
@@ -63,5 +64,6 @@ else()
         nlohmann_json::nlohmann_json
         strife::math
         strife::common
+        strife::reflection
     )
 endif()

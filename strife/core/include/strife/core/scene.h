@@ -11,8 +11,6 @@
 
 namespace strife {
     namespace core {
-
-        using ContextType = std::map<const unique::Identifier, const Entity>;
         
         class Scene : public unique::Unique {
 

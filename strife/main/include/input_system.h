@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include "strife/core/system.h"
+#include "strife/events/input_event.h"
 #include "strife/input/input_manager.h"
 
 namespace strife {
@@ -21,7 +22,7 @@ namespace strife {
 
         private:
 
-            void process(const core::InputEvent& event);
+            void process(const events::InputEvent& event);
 
         };
         

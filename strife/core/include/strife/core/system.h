@@ -2,8 +2,9 @@
 
 #include <functional>
 #include <set>
-#include "strife/core/events.h"
 #include "strife/core/scene.h"
+#include "strife/events/scene_swap_event.h"
+#include "strife/events/update_event.h"
 #include "strife/functional/dispatcher.h"
 
 namespace strife {
@@ -32,14 +33,16 @@ namespace strife {
             virtual void unsubscribe(functional::Dispatcher& dispatcher);
             
         protected:
-            
-            Scene* scene_;
+
+            Scene* const scene() const;
         
-            virtual void onUpdate(const UpdateEvent& updateEvent) = 0;
+            virtual void onUpdate(const events::UpdateEvent& updateEvent) = 0;
             
         private:
             
-            void onSceneSwap(const SceneSwapEvent& sceneSwapEvent);
+            Scene* scene_;
+            
+            void onSceneSwap(const events::SceneSwapEvent& sceneSwapEvent);
             
         };
         

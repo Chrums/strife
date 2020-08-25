@@ -6,14 +6,24 @@ using namespace std;
 using namespace strife::serialization;
 using namespace strife::unique;
 
-IContext::IContext(const Data& data)
+void Context::Require(Data& data, string index) {
+    data[ITEM_INDEX] = index;
+}
+
+Context::Context(const Data& data)
     : data(apply(data)) {}
 
-void IContext::dispose() {
+Context::~Context() {
+    for (auto& [index, item] : items_) {
+        free(item);
+    }
+}
+
+void Context::dispose() {
     Contexts::Dispose(*this);
 }
 
-const Data IContext::apply(const Data& data) const {
+const Data Context::apply(const Data& data) const {
     Data other;
 
     if (data.is_array()) {

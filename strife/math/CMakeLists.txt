@@ -9,10 +9,19 @@ FetchContent_Declare(json
 )
 
 FetchContent_GetProperties(json)
-
 if(NOT json_POPULATED)
     FetchContent_Populate(json)
     add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
+FetchContent_Declare(eigen
+    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+    GIT_TAG 3.3.7
+)
+
+FetchContent_GetProperties(eigen)
+if(NOT eigen_POPULATED)
+    FetchContent_Populate(eigen)
 endif()
 
 if(CMAKE_CXX_COMPILER MATCHES "em\\+\\+$")
@@ -36,4 +45,15 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${eigen_SOURCE_DIR}
 )
+
+if(EMSCRIPTEN)
+    target_link_libraries(${PROJECT_NAME}
+        nlohmann_json::nlohmann_json
+    )
+else()
+    target_link_libraries(${PROJECT_NAME}
+        nlohmann_json::nlohmann_json
+    )
+endif()

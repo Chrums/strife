@@ -21,7 +21,7 @@ namespace strife {
 
         private:
 
-            const Entity entity_;
+            Entity entity_;
 
         };
         

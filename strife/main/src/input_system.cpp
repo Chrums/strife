@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace strife::core;
+using namespace strife::events;
 using namespace strife::main;
 using namespace strife::functional;
      

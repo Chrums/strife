@@ -25,6 +25,7 @@ namespace strife {
             
                 Binding(Callback<M> callback)
                     : callback_(callback) {}
+                    
                 ~Binding() = default;
                     
                 void operator()(const Message& message) {

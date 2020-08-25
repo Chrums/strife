@@ -1,51 +1,51 @@
 #pragma once
 
 #include <map>
+#include <string>
 #include "strife/serialization/data.h"
 #include "strife/unique/unique.h"
+
+#define ITEM_INDEX "__ITEM__"
 
 namespace strife {
     namespace serialization {
 
-        class IContext : public unique::Unique {
+        class Context : public unique::Unique {
 
         public:
+
+            static void Require(Data& data, std::string index);
 
             const Data data;
 
+            Context(const Data& data);
+            ~Context();
+
             void dispose();
 
-        protected:
+            template <class T>
+            T& resolve(const Data& data) {
+                std::string index = data[ITEM_INDEX].get<std::string>();
 
-            IContext(const Data& data);
-            ~IContext() = default;
+                std::map<const std::string, void* const>::iterator iterator = items_.find(index);
+                if (iterator == items_.end()) {
+                    int size = sizeof(T);
+                    void* const block = malloc(size);
+
+                    T* const item = new (block) T;
+
+                    items_.insert({index, item});
+                }
+                
+                void* const item = items_.at(index);
+                return *static_cast<T* const>(item);
+            }
 
         private:
-
+            
+            std::map<const std::string, void* const> items_;
+            
             const Data apply(const Data& data) const;
-
-        };
-
-        template <class T>
-        class Context : public IContext {
-
-        public:
-
-            const T& value() const {
-                return value_;
-            }
-
-            T& value() {
-                return value_;
-            }
-
-            Context(const Data& data)
-                : IContext(data) {}
-            ~Context() = default;
-
-        private:
-
-            T value_;
 
         };
 

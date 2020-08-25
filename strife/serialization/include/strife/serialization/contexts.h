@@ -4,6 +4,7 @@
 #include <string>
 #include "strife/serialization/context.h"
 #include "strife/serialization/data.h"
+#include "strife/reflection/type.h"
 
 #define CONTEXT_INDEX "__CONTEXT__"
 
@@ -14,25 +15,23 @@ namespace strife {
 
         public:
 
-            static IContext& Instantiate(const Data& data);
-            static void Dispose(const IContext& context);
+            static Context& Instantiate(const Data& data);
+            static void Dispose(const Context& context);
 
-            static void Require(Data& data);
-            static IContext& Resolve(const Data& data);
+            static void Require(Data& data, std::string index);
+            static Context& Resolve(const Data& data);
             static bool Exists(const Data& data);
 
-            template <class U>
-            static Context<U>& Instantiate(const Data& data) {
-                Context<U>* context = new Context<U>(data);
-                const strife::unique::Identifier& id = context->id();
-                Contexts::Contexts_.insert({id, context});
-                return *context;
+            template <class T>
+            static void Require(Data& data) {
+                std::string index = reflection::Type::Of<T>().name();
+                Require(data, index);
             }
 
-            template <class U>
-            static Context<U>& Resolve(const Data& data) {
-                IContext& context = Contexts::Resolve(data);
-                return static_cast<Context<U>&>(context);
+            template <class T>
+            static T& Resolve(const Data& data) {
+                Context& context = Contexts::Resolve(data);
+                return context.resolve<T>(data);
             }
 
             Contexts() = delete;
@@ -40,7 +39,7 @@ namespace strife {
 
         private:
 
-            static std::map<const strife::unique::Identifier, IContext* const> Contexts_;
+            static std::map<const unique::Identifier, Context> Contexts_;
 
         };
 

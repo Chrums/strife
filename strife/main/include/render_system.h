@@ -2,7 +2,8 @@
 
 #include <SDL2/SDL.h>
 #include "strife/core/system.h"
-#include "strife/math/vector2.h"
+#include "strife/events/update_event.h"
+#include "strife/math/math.h"
 
 namespace strife {
     namespace main {
@@ -11,9 +12,9 @@ namespace strife {
             
         public:
 
-            RenderSystem(const math::Vector2& windowDimensions);
+            RenderSystem(const math::Vector2i& windowDimensions);
             ~RenderSystem();
-            virtual void onUpdate(const core::UpdateEvent& updateEvent);
+            void onUpdate(const events::UpdateEvent& updateEvent);
             
         private:
 

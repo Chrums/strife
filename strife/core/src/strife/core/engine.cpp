@@ -1,9 +1,14 @@
 #include "strife/core/engine.h"
 
-#include "strife/core/events.h"
+#include "strife/events/input_event.h"
+#include "strife/events/scene_load_event.h"
+#include "strife/events/scene_swap_event.h"
+#include "strife/events/scene_unload_event.h"
+#include "strife/events/update_event.h"
 
 using namespace std;
 using namespace strife::core;
+using namespace strife::events;
 using namespace strife::reflection;
     
 void loop(void* context) {

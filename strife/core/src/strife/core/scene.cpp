@@ -163,7 +163,7 @@ const Data Scene::serialize() const {
 }
 
 void Scene::deserialize(const Data& data) {
-    Context<ContextType>& context = Contexts::Instantiate<ContextType>(data);
+    Context& context = Contexts::Instantiate(data);
 
     const Data& entitiesData = context.data[ENTITIES_INDEX];
     entities_.deserialize(entitiesData);

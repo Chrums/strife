@@ -13,12 +13,17 @@ namespace strife {
                 
             public:
             
-                float total;
-                float delta;
+                const float& total() const;
+                const float& delta() const;
             
                 Value();
-                Value(float total, float delta);
+                Value(const float& total, const float& delta);
                 ~Value() = default;
+
+            private:
+
+                float total_;
+                float delta_;
                 
             };
             

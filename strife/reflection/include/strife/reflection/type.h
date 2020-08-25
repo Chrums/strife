@@ -13,6 +13,8 @@ namespace strife {
 
         public:
 
+            static const Type& Of(std::string name);
+
             template <class T>
             static void Register() {
                 const Type& type = Type::Of<T>();
@@ -32,8 +34,6 @@ namespace strife {
                 
                 return type;
             }
-
-            static const Type& Of(std::string name);
 
             const std::type_index& index() const;
             const std::string& name() const;

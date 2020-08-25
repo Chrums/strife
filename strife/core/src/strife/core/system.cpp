@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace strife::core;
+using namespace strife::events;
 using namespace strife::functional;
 
 System::System()
@@ -16,6 +17,10 @@ void System::subscribe(Dispatcher& dispatcher) {
 void System::unsubscribe(Dispatcher& dispatcher) {
     dispatcher.unsubscribe<SceneSwapEvent>(bind(&System::onSceneSwap, this, placeholders::_1));
     dispatcher.unsubscribe<UpdateEvent>(bind(&System::onUpdate, this, placeholders::_1));
+}
+
+Scene* const System::scene() const {
+    return scene_;
 }
             
 void System::onSceneSwap(const SceneSwapEvent& sceneSwapEvent) {
