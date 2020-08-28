@@ -14,6 +14,7 @@ namespace strife {
 
             RenderSystem(const math::Vector2i& windowDimensions);
             ~RenderSystem();
+            
             void onUpdate(const events::UpdateEvent& updateEvent);
             
         private:

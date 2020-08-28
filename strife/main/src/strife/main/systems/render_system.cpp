@@ -1,4 +1,4 @@
-#include "render_system.h"
+#include "strife/main/systems/render_system.h"
 
 using namespace strife::core;
 using namespace strife::events;

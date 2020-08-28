@@ -6,7 +6,7 @@ namespace strife {
     namespace math {
 
         template <typename Derived, typename T, int Size>
-        class Vector : public Base<Derived, T, Size, 1> {
+        class VectorBase : public Base<Derived, T, Size, 1> {
 
             using Base<Derived, T, Size, 1>::Base;
 
@@ -25,6 +25,13 @@ namespace strife {
                 return this->data().dot(otherDerived.data());
             }
             
+        };
+
+        template <typename T, int Size>
+        class Vector : public VectorBase<Vector<T, Size>, T, Size> {
+
+            using VectorBase<Vector<T, Size>, T, Size>::VectorBase;
+
         };
 
     }

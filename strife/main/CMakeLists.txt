@@ -1,6 +1,22 @@
 cmake_minimum_required(VERSION 3.11.0)
 project(main)
 
+include(FetchContent)
+
+FetchContent_Declare(bullet
+    GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git
+    GIT_TAG 2.89
+)
+
+FetchContent_GetProperties(bullet)
+if(NOT bullet3_POPULATED)
+    FetchContent_Populate(bullet)
+    add_subdirectory(${bullet_SOURCE_DIR} ${bullet_BINARY_DIR} EXCLUDE_FROM_ALL)
+    target_include_directories(Bullet3Common INTERFACE
+        ${bullet_SOURCE_DIR}/src
+    )
+endif()
+
 if(CMAKE_CXX_COMPILER MATCHES "em\\+\\+$")
     set(EMSCRIPTEN TRUE)
 else()
@@ -38,6 +54,15 @@ if(EMSCRIPTEN)
     target_link_libraries(${PROJECT_NAME}
         libboost_system.a
         libboost_filesystem.a
+        Bullet3Collision
+        Bullet3Common
+        Bullet3Dynamics
+        Bullet3Geometry
+        BulletCollision
+        BulletDynamics
+        BulletInverseDynamics
+        BulletSoftBody
+        LinearMath
         strife::common
         strife::core
         strife::math
@@ -46,6 +71,8 @@ else()
     target_link_libraries(${PROJECT_NAME}
         Boost::system
         Boost::filesystem
+        Bullet3Common
+        Bullet3Dynamics
         strife::common
         strife::core
         strife::math

@@ -5,9 +5,9 @@
 namespace strife {
     namespace math {
         
-        class Vector2f : public Vector2<Vector2f, float> {
+        class Vector2f : public Vector2Base<Vector2f, float> {
 
-            using Vector2<Vector2f, float>::Vector2;
+            using Vector2Base<Vector2f, float>::Vector2Base;
 
         public:
 

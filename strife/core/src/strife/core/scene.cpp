@@ -74,6 +74,7 @@ IStorage& Scene::Components::at(const Type& type) const {
 Component& Scene::Components::add(const Type& type, const Entity& entity) {
     IStorage& storage = at(type);
     Component& component = storage.add(entity);
+    component.initialize();
     return component;
 }
 

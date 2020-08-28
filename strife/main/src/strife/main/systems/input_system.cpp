@@ -1,4 +1,4 @@
-#include "input_system.h"
+#include "strife/main/systems/input_system.h"
 
 using namespace std;
 using namespace strife::core;

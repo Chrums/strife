@@ -6,9 +6,9 @@ namespace strife {
     namespace math {
         
         template <typename Derived, typename T>
-        class Vector4 : public Vector<Derived, T, 4> {
+        class Vector4Base : public VectorBase<Derived, T, 4> {
 
-            using Vector<Derived, T, 4>::Vector;
+            using VectorBase<Derived, T, 4>::VectorBase;
 
         public:
 
@@ -44,8 +44,15 @@ namespace strife {
                 return this->operator[](4);
             }
 
-            Vector4(const T& x, const T& y, const T& z, const T& w)
-                : Vector4({ x, y, z, w }) {}
+            Vector4Base(const T& x, const T& y, const T& z, const T& w)
+                : Vector4Base({ x, y, z, w }) {}
+
+        };
+
+        template <typename T>
+        class Vector4 : public Vector4Base<Vector4<T>, T> {
+
+            using Vector4Base<Vector4<T>, T>::Vector4Base;
 
         };
 

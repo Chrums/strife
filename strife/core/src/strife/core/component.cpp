@@ -12,6 +12,14 @@ Component::Component(const Entity& entity)
     : Unique()
     , entity_(entity) {}
 
+Component::~Component() {
+    dispose();
+}
+
+void Component::initialize() {}
+
+void Component::dispose() {}
+
 const Data Component::serialize() const {
     return Data();
 }

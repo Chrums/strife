@@ -5,9 +5,9 @@
 namespace strife {
     namespace math {
 
-        class Matrix2i : public Matrix2<Matrix2i, int> {
+        class Matrix2i : public Matrix2Base<Matrix2i, int> {
 
-            using Matrix2<Matrix2i, int>::Matrix2;
+            using Matrix2Base<Matrix2i, int>::Matrix2Base;
 
         public:
 

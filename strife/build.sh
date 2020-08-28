@@ -28,5 +28,5 @@ mkdir -p build
 pushd build
 eval $build $buildFlags ..
 eval $compile $compileFlags
-eval $install $installFlags
+# eval $install $installFlags
 popd

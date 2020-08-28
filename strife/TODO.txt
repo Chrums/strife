@@ -1,0 +1,4 @@
+- Figure out when to call Component::initialize()
+  - When deserializing, it should wait until all components have been added...
+
+- Figure out how to get component by base class (i.e. entity().components().at<ICollider>())

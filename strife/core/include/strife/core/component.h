@@ -14,7 +14,10 @@ namespace strife {
             const Entity& entity();
             
             Component(const Entity& entity);
-			virtual ~Component() = default;
+			virtual ~Component();
+            
+            virtual void initialize();
+            virtual void dispose();
             
             virtual const serialization::Data serialize() const;
             virtual void deserialize(const serialization::Data& data);

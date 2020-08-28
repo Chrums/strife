@@ -6,9 +6,16 @@ namespace strife {
     namespace math {
         
         template <typename Derived, typename T>
-        class Matrix3 : public Matrix<Derived, T, 3, 3> {
+        class Matrix3Base : public MatrixBase<Derived, T, 3, 3> {
 
-            using Matrix<Derived, T, 3, 3>::Matrix;
+            using MatrixBase<Derived, T, 3, 3>::MatrixBase;
+
+        };
+        
+        template <typename T>
+        class Matrix3 : Matrix3Base<Matrix3<T>, T> {
+
+            using Matrix3Base<Matrix3<T>, T>::Matrix3Base;
 
         };
         

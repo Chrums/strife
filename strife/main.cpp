@@ -2,8 +2,12 @@
 #include <optional>
 #include <emscripten.h>
 #include "strife/core/engine.h"
-#include "input_system.h"
-#include "render_system.h"
+#include "strife/main/components/collider_base.h"
+#include "strife/main/components/rigid_body.h"
+#include "strife/main/components/transform.h"
+#include "strife/main/systems/input_system.h"
+#include "strife/main/systems/render_system.h"
+#include "strife/main/systems/physics_system.h"
 #include "strife/functional/action.h"
 #include "strife/input/mouse_input.h"
 #include "strife/serialization/data.h"
@@ -105,37 +109,35 @@ private:
 
 int main(int argc, char* argv[]) {
     
-    Vector3f v0 = Vector3f::Zero;
-    v0.y() = 1.0f;
-    Vector3f v1 = Vector3f::Right;
-    
-    Vector3f v2 = v1.cross(v0);
-
-    Matrix2f m0 = Matrix2f::Identity;
-    Matrix2f m1 = Matrix2f::Identity;
-
-    Matrix2f m2 = m0 * 2.0f;
-
-    cout << v2 << endl;
-    cout << m2.trace() << endl;
-
-    // Engine& engine = Engine::Instance();
+    Engine& engine = Engine::Instance();
 
     // engine.components.add<TestComponent>();
+    engine.components.add<ColliderBase>();
+    engine.components.add<RigidBody>();
+    engine.components.add<Transform>();
 
-    // engine.systems.add<InputSystem>();
-    // engine.systems.add<RenderSystem>(Vector2i(640, 480));
     // engine.systems.add<TestSystem>();
+    engine.systems.add<InputSystem>();
+    engine.systems.add<RenderSystem>(Vector2i(640, 480));
+    engine.systems.add<PhysicsSystem>();
     
-    // string path = "...";
-    // Scene& s0 = engine.scenes.load(path);
-    // Entity e0 = s0.entities().add();
+    string path = "...";
+
+    Scene& s0 = engine.scenes.load(path);
+
+    Entity e0 = s0.entities().add();
+
+    Transform& e0_transform = e0.components().add<Transform>();
+    ColliderBase& e0_colliderBase = e0.components().add<ColliderBase>();
+    RigidBody& e0_rigidBody = e0.components().add<RigidBody>();
+
     // TestComponent& tc0 = e0.components().add<TestComponent>();
     // Entity e1 = s0.entities().add();
     // TestComponent& tc1 = e1.components().add<TestComponent>();
     // Entity e2 = s0.entities().add();
     // TestComponent& tc2 = e2.components().add<TestComponent>();
-    // engine.scenes.swap(path);
+    
+    engine.scenes.swap(path);
 
     // tc0.a = 1;
 
@@ -145,9 +147,10 @@ int main(int argc, char* argv[]) {
     // Data d0 = s0.serialize();
     // cout << d0 << endl;
     // s0.deserialize(d0);
-    // cout << s0.serialize() << endl;
+    
+    cout << s0.serialize() << endl;
 
-    // engine.run();
+    engine.run();
     
     return 0;
 }
