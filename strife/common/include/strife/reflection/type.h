@@ -12,27 +12,31 @@ namespace strife {
         class Type {
 
         public:
-
+            
             static const Type& Of(std::string name);
 
             template <class T>
-            static void Register() {
-                const Type& type = Type::Of<T>();
+            static const Type& Of(const T& object) {
+                return Type::Of<T>();
             }
 
             template <class T>
             static const Type& Of() {
                 const std::type_index& typeIndex = typeid(T);
                 const std::type_info& typeInfo = typeid(T);
-                const std::pair<std::map<const std::type_index, const Type>::iterator, bool> pair = Type::Types_.emplace(typeIndex, typeInfo);
-                const Type& type = pair.first->second;
-                
-                bool isRegister = pair.second;
-                if (isRegister) {
-                    Type::Inverse_.insert({ type.name_, type.index_ });
-                }
-                
-                return type;
+                return Type::Types_.emplace(typeIndex, typeInfo).first->second;
+            }
+
+            template <class T>
+            static void Register() {
+                const Type& type = Type::Of<T>();
+                Type::Inverse_.insert({ type.name_, type.index_ });
+            }
+
+            template <class T>
+            static void Unregister() {
+                const Type& type = Type::Of<T>();
+                Type::Inverse_.erase(type.name_);
             }
 
             const std::type_index& index() const;

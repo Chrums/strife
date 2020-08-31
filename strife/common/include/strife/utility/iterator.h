@@ -1,7 +1,7 @@
 #pragma once
 
 namespace strife {
-    namespace common {
+    namespace utility {
         
         template <class T, class U>
         class IIterator {

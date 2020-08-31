@@ -8,17 +8,14 @@
 namespace strife {
     namespace main {
         
-        class InputSystem : public core::ISystem {
+        class InputSystem : public core::System<InputSystem> {
             
         public:
 
             input::InputManager inputManager;
             
-            InputSystem() = default;
+            InputSystem();
             ~InputSystem() = default;
-
-            virtual void subscribe(functional::Dispatcher& dispatcher);
-            virtual void unsubscribe(functional::Dispatcher& dispatcher);
 
         private:
 

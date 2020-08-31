@@ -11,6 +11,7 @@
 #include "strife/core/system.h"
 #include "strife/functional/dispatcher.h"
 #include "strife/reflection/type.h"
+#include "strife/time/time.h"
 #include "strife/time/timer.h"
 
 namespace strife {
@@ -32,6 +33,7 @@ namespace strife {
 
                 template <class C>
                 void add() {
+                    reflection::Type::Register<C>();
                     const reflection::Type& type = reflection::Type::Of<C>();
                     Storage<C>* const storage = new Storage<C>();
                     storages_.insert({type, storage});
@@ -39,6 +41,7 @@ namespace strife {
 
                 template <class C>
                 void remove() {
+                    reflection::Type::Unregister<C>();
                     const reflection::Type& type = reflection::Type::Of<C>();
                     storages_.erase(type);
                 }
@@ -75,11 +78,12 @@ namespace strife {
                 Systems(Engine& engine);
                 ~Systems();
                 
-                template <class S, class ...Args>
-                S& add(Args... args) {
+                template <class S>
+                S& add() {
                     std::type_index type(typeid(S));
-                    S* const system = new S(args...);
-                    system->subscribe(engine_.dispatcher);
+                    S* const system = new S();
+                    system->configure(engine_.dispatcher);
+                    system->initialize();
                     systems_.insert({type, system});
                     return *system;
                 }
@@ -88,7 +92,7 @@ namespace strife {
                 void remove() {
                     std::type_index type(typeid(S));
                     S* const system = systems_.at(type);
-                    system->unsubscribe(engine_.dispatcher);
+                    system->dispose();
                     systems_.erase(type);
                 }
                 
@@ -121,7 +125,7 @@ namespace strife {
             static Engine& Instance();
             
             functional::Dispatcher dispatcher;
-            time::Timer::Value time;
+            time::Time time;
             
             Components components;
             Scenes scenes;

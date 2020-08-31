@@ -1,9 +1,9 @@
 #include "strife/input/mouse_input.h"
 
+using namespace std;
 using namespace strife::input;
-using namespace strife::math;
 
-const Vector2i& MouseInput::position() const {
+const pair<int, int>& MouseInput::position() const {
     return position_;
 }
 

@@ -38,16 +38,12 @@ if(EMSCRIPTEN)
     target_link_libraries(${PROJECT_NAME}
         libboost_system.a
         libboost_filesystem.a
-        strife::reflection
         strife::common
-        strife::serialization
     )
 else()
     target_link_libraries(${PROJECT_NAME}
         Boost::system
         Boost::filesystem
-        strife::reflection
         strife::common
-        strife::serialization
     )
 endif()

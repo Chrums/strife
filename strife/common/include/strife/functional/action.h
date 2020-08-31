@@ -1,19 +1,22 @@
 #pragma once
 
 #include <functional>
-#include <vector>
+#include <list>
+#include <memory>
+#include "strife/functional/callback.h"
+#include "strife/functional/token.h"
 
 namespace strife {
     namespace functional {
         
-        template <class ...Args>
+        template <typename ...Args>
         class Action {
             
         public:
-        
-            using Callback = std::function<void (Args...)>;
-            
-        public:
+
+            const int count() const {
+                return callbackPointers_.size();
+            }
         
             Action() = default;
             ~Action() = default;
@@ -22,37 +25,32 @@ namespace strife {
                 invoke(args...);
             }
 
-            Action<Args...>& operator+=(Callback callback) {
-                subscribe(callback);
-                return *this;
-            }
-
-            Action<Args...>& operator-=(Callback callback) {
-                unsubscribe(callback);
-                return *this;
+            void invoke(Args... args) {
+                for (typename std::list<std::weak_ptr<Callback>>::iterator iterator = callbackPointers_.begin(); iterator != callbackPointers_.end(); ++iterator) {
+                    std::weak_ptr<Callback>& callbackPointer = *iterator;
+                    if (callbackPointer.expired()) {
+                        callbackPointers_.erase(iterator);
+                    } else {
+                        Callback& callback = *callbackPointer.lock();
+                        callback(args...);
+                    }
+                }
             }
         
-            void subscribe(Callback callback) {
-                callbacks_.push_back(callback);
+            Token<Args...> subscribe(Callback callback) {
+                std::shared_ptr<Callback> callbackPointer = std::make_shared<Callback>(callback);
+                callbackPointers_.push_back(callbackPointer);
+                Token token(callbackPointer);
+                return token;
             }
             
-            void unsubscribe(Callback callback) {
-                // typename std::vector<Callback>::iterator iterator = std::find(callbacks_.begin(), callbacks_.end(), callback);
-                // callbacks_.erase(iterator);
-
-                // TODO: Implement this...
-                // The above method doesn't work becuase std::function are not comparable
-            }
-
-            void invoke(Args... args) {
-                for (Callback callback : callbacks_) {
-                    callback(args...);
-                }
+            void unsubscribe(Token& token) {
+                token.dispose();
             }
             
 		private:
 		
-			std::vector<Callback> callbacks_;
+			std::list<std::weak_ptr<Callback>> callbackPointers_;
             
         };
         

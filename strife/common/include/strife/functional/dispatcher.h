@@ -1,20 +1,18 @@
 #pragma once
 
 #include <functional>
+#include <list>
 #include <map>
 #include <typeindex>
-#include <vector>
+#include "strife/functional/callback.h"
 #include "strife/functional/message.h"
+#include "strife/functional/token.h"
+#include "strife/reflection/type.h"
 
 namespace strife {
     namespace functional {
         
         class Dispatcher {
-        
-        public:
-        
-            template <class M>
-            using Callback = std::function<void (const M&)>;
             
         protected:
             
@@ -35,7 +33,7 @@ namespace strife {
                 
             private:
             
-                const Callback<M> callback_;
+                const Callback<const M&> callback_;
             
             };
             
@@ -45,25 +43,25 @@ namespace strife {
             ~Dispatcher() = default;
         
             void emit(const Message& message);
+            void unsubscribe(Token<const Message&>& token);
             
             template <class M>
-            void subscribe(Callback<M> callback) {
-                const std::type_index type(typeid(M));
-                std::vector<Callback<Message>>& callbacks = callbacks_[type];
+            Token<const Message&> subscribe(Callback<const M&> callback) {
+                const reflection::Type type = reflection::Type::Of<M>();
+
                 Binding<M> binding(callback);
-                callbacks.push_back(binding);
-            }
-            
-            template <class M>
-            void unsubscribe(Callback<M> callback) {
-                const std::type_index type(typeid(M));
-                std::vector<Callback<Message>>& callbacks = callbacks_[type];
-                // TODO: Implement this...
+                std::shared_ptr<Callback<const Message&>> callbackPointer = std::make_shared<Callback<const Message&>>(binding);
+
+                std::list<std::weak_ptr<Callback<const Message&>>>& callbacks = callbackPointers_[type];
+                callbacks.push_back(callbackPointer);
+                
+                Token<const Message&> token(callbackPointer);
+                return token;
             }
             
 		private:
 		
-			std::map<const std::type_index, std::vector<Callback<Message>>> callbacks_;
+			std::map<const reflection::Type, std::list<std::weak_ptr<Callback<const Message&>>>> callbackPointers_;
             
         };
         

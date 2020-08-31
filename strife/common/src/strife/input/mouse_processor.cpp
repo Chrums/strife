@@ -1,7 +1,7 @@
 #include "strife/input/mouse_processor.h"
 
+using namespace std;
 using namespace strife::input;
-using namespace strife::math;
 
 void MouseProcessor::process(const SDL_Event& event) {
     switch (event.type) {
@@ -30,8 +30,7 @@ void MouseProcessor::process(const SDL_Event& event) {
 }
 
 void MouseProcessor::processMotion(const SDL_Event& event) {
-    position_.x() = event.motion.x;
-    position_.y() = event.motion.y;
+    position_ = pair(event.motion.x, event.motion.y);
 }
 
 void MouseProcessor::processButton(const SDL_Event& event) {

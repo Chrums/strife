@@ -20,24 +20,18 @@ else()
     find_package(Boost 1.72.0 REQUIRED)
 endif()
 
-add_subdirectory(reflection)
 add_subdirectory(math)
 add_subdirectory(common)
-add_subdirectory(serialization)
-add_subdirectory(core)
-add_subdirectory(main)
+#add_subdirectory(core)
+#add_subdirectory(main)
 
 add_executable(index main.cpp)
 
 target_compile_features(index INTERFACE cxx_std_17)
 
 target_link_libraries(index
-    strife::reflection
     strife::math
     strife::common
-    strife::serialization
-    strife::core
-    strife::main
 )
 
 if(EMSCRIPTEN)

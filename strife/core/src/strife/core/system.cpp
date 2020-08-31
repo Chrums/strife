@@ -5,24 +5,14 @@ using namespace strife::core;
 using namespace strife::events;
 using namespace strife::functional;
 
-System::System()
-    : ISystem()
-    , scene_(nullptr) {}
-
-void System::subscribe(Dispatcher& dispatcher) {
-    dispatcher.subscribe<SceneSwapEvent>(bind(&System::onSceneSwap, this, placeholders::_1));
-    dispatcher.subscribe<UpdateEvent>(bind(&System::onUpdate, this, placeholders::_1));
+void ISystem::configure(Dispatcher& dispatcher) {
+    dispatcher_ = &dispatcher;
 }
 
-void System::unsubscribe(Dispatcher& dispatcher) {
-    dispatcher.unsubscribe<SceneSwapEvent>(bind(&System::onSceneSwap, this, placeholders::_1));
-    dispatcher.unsubscribe<UpdateEvent>(bind(&System::onUpdate, this, placeholders::_1));
+const Dispatcher& ISystem::dispatcher() const {
+    return *dispatcher_;
 }
 
-Scene* const System::scene() const {
-    return scene_;
-}
-            
-void System::onSceneSwap(const SceneSwapEvent& sceneSwapEvent) {
-    scene_ = sceneSwapEvent.to();
+Dispatcher& ISystem::dispatcher() {
+    return *dispatcher_;
 }

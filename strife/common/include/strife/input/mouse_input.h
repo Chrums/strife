@@ -4,7 +4,6 @@
 #include <SDL2/SDL.h>
 #include "strife/input/button_input.h"
 #include "strife/input/mouse_button_processor.h"
-#include "strife/math/math.h"
 
 namespace strife {
     namespace input {
@@ -26,12 +25,12 @@ namespace strife {
             MouseInput() = default;
             ~MouseInput() = default;
 
-            const math::Vector2i& position() const;
+            const std::pair<int, int>& position() const;
             const ButtonInput& button(const int index);
 
         protected:
 
-            math::Vector2i position_;
+            std::pair<int, int> position_;
             std::map<int, MouseButtonProcessor> mouseButtonProcessors_;
 
             MouseButtonProcessor& findMouseButtonProcessor(const int index);

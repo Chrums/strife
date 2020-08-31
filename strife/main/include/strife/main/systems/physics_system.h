@@ -6,7 +6,7 @@
 namespace strife {
     namespace main {
 
-        class PhysicsSystem : public core::System {
+        class PhysicsSystem : public core::System<PhysicsSystem> {
 
         public:
 
@@ -15,6 +15,7 @@ namespace strife {
             PhysicsSystem();
             ~PhysicsSystem() = default;
 
+            void initialize();
             void onUpdate(const events::UpdateEvent& updateEvent);
 
         private:

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <set>
+#include <list>
 #include "strife/core/scene.h"
 #include "strife/events/scene_swap_event.h"
 #include "strife/events/update_event.h"
@@ -9,40 +9,68 @@
 
 namespace strife {
     namespace core {
-        
+
         class ISystem {
-            
+
         public:
-        
+
             ISystem() = default;
             virtual ~ISystem() = default;
-            
-            virtual void subscribe(functional::Dispatcher& dispatcher) = 0;
-            virtual void unsubscribe(functional::Dispatcher& dispatcher) = 0;
-            
+
+            void configure(functional::Dispatcher& dispatcher);
+            virtual void initialize() = 0;
+            virtual void dispose() = 0;
+
+        protected:
+
+            const functional::Dispatcher& dispatcher() const;
+            functional::Dispatcher& dispatcher();
+
+        private:
+
+            functional::Dispatcher* dispatcher_;
+
         };
         
-        class System : public ISystem {
+        template <typename S>
+        class System : ISystem {
+
+            using ISystem::ISystem;
             
         public:
-        
-            System();
-            ~System() = default;
-            
-            virtual void subscribe(functional::Dispatcher& dispatcher);
-            virtual void unsubscribe(functional::Dispatcher& dispatcher);
+
+            virtual void initialize() {
+                callback<events::SceneSwapEvent>(&System::onSceneSwap);
+            }
+
+            virtual void dispose() {}
+
+            template <typename M, typename F>
+            void callback(F&& callable) {
+                S* const derived = static_cast<S* const>(this);
+                functional::Callback<const M&> callback = std::bind(callable, derived, std::placeholders::_1);
+                functional::Token<const functional::Message&> token = dispatcher().template subscribe<M>(callback);
+                tokens_.push_back(token);
+            }
             
         protected:
 
-            Scene* const scene() const;
-        
-            virtual void onUpdate(const events::UpdateEvent& updateEvent) = 0;
-            
+            const Scene* const scene() const {
+                return scene_;
+            }
+
+            Scene* const scene() {
+                return scene_;
+            }
+
         private:
-            
+
+            std::list<functional::Token<const functional::Message&>> tokens_;
             Scene* scene_;
             
-            void onSceneSwap(const events::SceneSwapEvent& sceneSwapEvent);
+            void onSceneSwap(const events::SceneSwapEvent& sceneSwapEvent) {
+                scene_ = sceneSwapEvent.to();
+            }
             
         };
         

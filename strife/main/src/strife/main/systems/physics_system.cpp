@@ -18,6 +18,7 @@ PhysicsSystem::PhysicsSystem()
     , dbvtBroadphase_()
     , sequentialImpulseConstraintSolver_()
     , discreteDynamicsWorld_(&collisionDispatcher_, &dbvtBroadphase_, &sequentialImpulseConstraintSolver_, &defaultCollisionConfiguration_) {
+
     btVector3 gravity(0.0f, -9.81f, 0.0f);
     discreteDynamicsWorld_.setGravity(gravity);
 
