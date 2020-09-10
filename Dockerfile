@@ -15,5 +15,4 @@ RUN cd $BOOST_ROOT \
     && cp stage/lib/*.a /usr/lib/boost \
     && rm -rf stage
 
-RUN echo ${BOOST_ROOT}
 ENTRYPOINT /bin/bash
