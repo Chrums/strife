@@ -65,12 +65,13 @@ namespace strife {
             template <typename C>
             Storage<C>* const find() {
                 const Type& type = Type::Of<C>();
-                std::map<const Type, IStorage* const>::iterator iterator = typeStorageMap_.find(type);
+                std::map<const Type, IStorage* const>::const_iterator iterator = typeStorageMap_.find(type);
                 return iterator == typeStorageMap_.end()
                     ? nullptr
                     : static_cast<Storage<C>* const>(iterator->second);
             }
 
+            std::map<const Type, Component* const> all(const Entity& entity);
             Component& add(const Type& type, const Entity& entity);
             void remove(const Type& type, const Entity& entity);
             Component* const find(const Type& type, const Entity& entity);
@@ -92,13 +93,27 @@ namespace strife {
             C* const find(const Entity& entity) {
                 const Type& type = Type::Of<C>();
                 Component* const component = find(type, entity);
-                return dynamic_cast<C* const>(component);
+
+                if (component == nullptr) {
+                    std::map<const Type, Component* const> components = all(entity);
+                    for (auto& [type, component] : components) {
+                        C* const value = dynamic_cast<C* const>(component);
+                        if (value != nullptr) {
+                            return value;
+                        }
+                    }
+
+                    return nullptr;
+                } else {
+                    return static_cast<C* const>(component);
+                }
             }
 
         private:
 
             Scene& scene_;
             std::map<const Type, IStorage* const> typeStorageMap_;
+            std::map<const Entity, std::map<const Type, Component* const>> entityComponentsMap_;
 
         };
 

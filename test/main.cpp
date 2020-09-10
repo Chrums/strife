@@ -113,11 +113,8 @@ int main(int argc, char* argv[]) {
 
     SphereCollider& sc1 = e1.components().add<SphereCollider>();
 
-    ICollider* const collider = e0.components().find<ICollider>();
-    if (collider == nullptr) {
-        cout << "null" << endl;
-    } else {
-        cout << "found" << endl;
+    ICollider* const collider = e1.components().find<ICollider>();
+    if (collider != nullptr) {
         collider->test();
     }
 

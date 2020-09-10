@@ -67,7 +67,7 @@ namespace strife {
             }
         }
 
-        template <typename M, typename T, typename F> 
+        template <typename M, typename T, typename F>
         void subscribe(T* const that, F&& callable) {
             const Type& type = Type::Of<M>();
 

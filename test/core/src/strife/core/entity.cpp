@@ -1,12 +1,17 @@
 #include "strife/core/entity.h"
 #include "strife/core/scene.h"
 
+using namespace std;
 using namespace strife;
 
 #pragma region Components
 
 Entity::Components::Components(Entity& entity)
     : entity_(entity) {}
+
+map<const Type, Component* const> Entity::Components::all() {
+    return entity_.scene().components().all(entity_);
+}
 
 Component& Entity::Components::add(const Type& type) {
     return entity_.scene().components().add(type, entity_);

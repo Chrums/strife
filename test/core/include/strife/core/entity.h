@@ -20,6 +20,7 @@ namespace strife {
             Components(Entity& entity);
             ~Components() = default;
 
+            std::map<const Type, Component* const> all();
             Component& add(const Type& type);
             void remove(const Type& type);
             Component* const find(const Type& type);
@@ -41,7 +42,20 @@ namespace strife {
             C* const find() {
                 const Type& type = Type::Of<C>();
                 Component* const component = find(type);
-                return static_cast<C* const>(component);
+
+                if (component == nullptr) {
+                    std::map<const Type, Component* const> components = all();
+                    for (auto& [type, component] : components) {
+                        C* const value = dynamic_cast<C* const>(component);
+                        if (value != nullptr) {
+                            return value;
+                        }
+                    }
+
+                    return nullptr;
+                } else {
+                    return static_cast<C* const>(component);
+                }
             }
 
         private:

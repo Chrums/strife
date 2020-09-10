@@ -27,31 +27,37 @@ void Scene::Entities::remove(const Entity& entity) {
 Scene::Components::Components(Scene& scene)
     : scene_(scene) {}
 
+map<const Type, Component* const> Scene::Components::all(const Entity& entity) {
+    return entityComponentsMap_[entity];
+}
+
 Component& Scene::Components::add(const Type& type, const Entity& entity) {
     IStorage& storage = *typeStorageMap_.at(type);
-    return storage.add(entity);
+    Component& component = storage.add(entity);
+
+    map<const Type, Component* const>& entityComponents = entityComponentsMap_[entity];
+    entityComponents.insert({type, &component});
+
+    return component;
 }
 
 void Scene::Components::remove(const Type& type, const Entity& entity) {
     IStorage& storage = *typeStorageMap_.at(type);
+
+    map<const Type, Component* const>& entityComponents = entityComponentsMap_[entity];
+    entityComponents.erase(type);
+
     storage.remove(entity);
 }
 
 Component* const Scene::Components::find(const Type& type, const Entity& entity) {
     map<const Type, IStorage* const>::iterator iterator = typeStorageMap_.find(type);
     if (iterator == typeStorageMap_.end()) {
-        map<const Type, Component&>& entityComponents = entityComponentsMap_[entity];
-        for (auto& [componentType, component] : entityComponents) {
-            if (type.is(component)) {
-                return &component;
-            }
-        }
-
         return nullptr;
-    } else {
-        IStorage& storage = *iterator->second;
-        return storage.find(entity);
     }
+
+    IStorage& storage = *iterator->second;
+    return storage.find(entity);
 }
 
 #pragma endregion
